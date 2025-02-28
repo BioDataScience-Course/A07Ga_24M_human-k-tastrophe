@@ -63,24 +63,25 @@ chart(biometry, masse ~ taille %col=% genre)+
 ### Description par l'étudiant 2
 
 ```{r}
-chart(dt, masse ~ tour_hanche %col=% genre) +
+chart(biometry, masse ~ tour_hanche %col=% genre) +
 geom_point()
 ```
 
 ```{r}
-chart(dt, ~ activite_physique %fill=% eau) +
-geom_histogram()
+chart(biometry, ~  %fill=% genre ) +
+geom_bar()
 ```
 
 ### Description par l'étudiant 3
 
 ```{r}
-chart(data = dt, masse ~ genre  %fill=% sucre)+
-  geom_violin()
+chart(data = biometry, masse ~ genre %col=% genre %fill=% sucre)+
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))
+  
 ```
 
 ```{r}
-chart(data = dt, taille ~ genre %fill=% genre |alimentation )+
+chart(data = biometry, taille ~ genre %fill=% genre |alimentation )+
   geom_boxplot()
 ```
 
