@@ -70,11 +70,13 @@ dt <- read$csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTTvgkHmrxPXHJ16
 ### Description par l'étudiant 3
 
 ```{r}
-
+chart(data = dt, masse ~ genre  %fill=% sucre)+
+  geom_violin()
 ```
 
 ```{r}
-
+chart(data = dt, taille ~ genre %fill=% genre |alimentation )+
+  geom_boxplot()
 ```
 
 ### Description par l'étudiant 4
