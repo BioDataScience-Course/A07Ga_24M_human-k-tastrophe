@@ -70,7 +70,16 @@ biometry %>.%
     biometry
 
 # Ajout des labels et des unités
-# TODO
+
+vec_labs <- biometry_metadata$label_fr
+names(vec_labs) <- meta$variables
+
+vec_units <- meta$unités
+names(vec_units) <- meta$variables
+
+dt <- labelise(dt,
+  label = as.list(vec_labs),
+  units = as.list(vec_units))
 
 
 # Sauvegarde local des données importantes 
