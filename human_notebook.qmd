@@ -71,8 +71,7 @@ geom_point()
 ```
 
 ```{r}
-chart(biometry, ~  %fill=% genre ) +
-geom_bar()
+tabularise(biometry)
 ```
 
 ### Description par l'étudiant 3
