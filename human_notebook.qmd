@@ -57,10 +57,7 @@ chart(biometry, masse ~ taille %col=% genre)+
 ```
 
 ```{r}
-chart(data = sdrop_na(biometry,sucre),~alimentation %fill=% sucre)+
-geom_bar()+
-  xlab("Alimentation") +
-  ylab("Effectifs")
+
 ```
 
 ### Description par l'étudiant 2
