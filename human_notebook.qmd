@@ -64,13 +64,13 @@ geom_bar()
 ### Description par l'étudiant 2
 
 ```{r}
-chart(dt, masse ~ tour_hanche %col=% genre) +
+chart(biometry, masse ~ tour_hanche %col=% genre) +
 geom_point()
 ```
 
 ```{r}
-chart(dt, ~ activite_physique %fill=% eau) +
-geom_histogram()
+chart(biometry, ~  %fill=% genre ) +
+geom_bar()
 ```
 
 ### Description par l'étudiant 3
