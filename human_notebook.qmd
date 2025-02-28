@@ -94,9 +94,7 @@ chart(data = biometry, ~ activite_physique %fill=% genre|genre) +
 ```
 
 ```{r}
-chart(data = biometry, ~ alcool %fill=% genre|genre) + 
-  geom_histogram(bins = 20) + 
-  labs(title = "Consommation d'alcool en fonction du genre", y = "Effectif", x = "Consommation d'alcool [verre/sem]", col = "Genre")
+
 ```
 
 ## Calcul d'indices
