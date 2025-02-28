@@ -89,13 +89,14 @@ chart(data = dt, taille ~ genre %fill=% genre |alimentation )+
 
 ```{r}
 chart(data = biometry, ~ activite_physique %fill=% genre|genre) + 
-  geom_density()
-
+  geom_density() + 
+  labs(title = "Activité physique en fonction du genre", y = "Effectif", x = "Activité physique [min/sem]", col = "Genre")
 ```
 
 ```{r}
 chart(data = biometry, ~ alcool %fill=% genre|genre) + 
-  geom_density()
+  geom_histogram(bins = 20) + 
+  labs(title = "Consommation d'alcool en fonction du genre", y = "Effectif", x = "Consommation d'alcool [verre/sem]", col = "Genre")
 ```
 
 ## Calcul d'indices
