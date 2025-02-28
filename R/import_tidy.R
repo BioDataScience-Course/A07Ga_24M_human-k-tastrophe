@@ -1,6 +1,6 @@
 # Étude de l'obésité - Importation et remaniement des données
-# Auteur : ___
-# Date : ____
+# Auteur : MartinJadouille
+# Date : 28/02/25
 ###############################################################################
 
 # Packages utiles
@@ -88,3 +88,4 @@ write$rds(biometry_metadata, "data/biometry_metadata.rds", compress = "xz")
 
 # Élimination des objets de l'environnement global
 rm(biometry_metadata, biometry)
+
