@@ -80,11 +80,14 @@ dt <- read$csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTTvgkHmrxPXHJ16
 ### Description par l'étudiant 4
 
 ```{r}
+chart(data = biometry, ~ activite_physique %fill=% genre|genre) + 
+  geom_density()
 
 ```
 
 ```{r}
-
+chart(data = biometry, ~ alcool %fill=% genre|genre) + 
+  geom_density()
 ```
 
 ## Calcul d'indices
