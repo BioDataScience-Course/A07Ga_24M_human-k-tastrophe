@@ -57,7 +57,7 @@ chart(biometry, masse ~ taille %col=% genre)+
 ```
 
 ```{r}
-
+tabularise(biometry)
 ```
 
 ### Description par l'étudiant 2
