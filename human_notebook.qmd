@@ -192,6 +192,7 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice4}
+#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
 biometry %>.%
 sselect(., masse, taille, genre, age_rec, age) %>.%
 smutate(.,IMC = masse / (taille / 100)^2,
@@ -203,17 +204,32 @@ IMC >= 30 ~ "Obésité")) -> biometry_imc
 biometry_imc
 biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 
+#Pour utiliser la boite à moustache
+biometry %>.%
+sselect(., masse, taille, genre, age_rec, age) %>.%
+smutate(.,IMC = masse / (taille / 100)^2) -> biometry_imc2
+biometry_imc2
+
+
+
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice4}
 #Graphique ou tableau utilisant l'indice calculé.
-#Graphique ou tableau utilisant l'indice calculé.
+#1
 chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
 geom_bar() +
 coord_flip() +
 labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC")
+#2) Boite à moustache
+chart(biometry_imc2, ~ IMC %fill=% age_rec |genre) +
+geom_boxplot() +
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC") +
+geom_vline(xintercept = 30, color = "red") +
+geom_vline(xintercept = 18.5 , color = "red") +
+geom_vline(xintercept = 25 , color = "red")
 ```
 
 \_
