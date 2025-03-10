@@ -57,10 +57,7 @@ chart(biometry, masse ~ taille %col=% genre)+
 ```
 
 ```{r}
-chart(data = sdrop_na(biometry,sucre),~alimentation %fill=% sucre)+
-geom_bar()+
-  xlab("Alimentation") +
-  ylab("Effectifs")
+tabularise(biometry)
 ```
 
 ### Description par l'étudiant 2
@@ -71,8 +68,7 @@ geom_point()
 ```
 
 ```{r}
-chart(biometry, ~  %fill=% genre ) +
-geom_bar()
+tabularise(biometry)
 ```
 
 ### Description par l'étudiant 3
@@ -103,15 +99,26 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 ### Description par l'étudiant 4
 
 ```{r}
-chart(data = biometry, ~ activite_physique %fill=% genre|genre) + 
-  geom_density() + 
-  labs(title = "Activité physique en fonction du genre", y = "Effectif", x = "Activité physique [min/sem]", col = "Genre")
+#découpage en classe de différentes tranches d'age (18-35,35-50,50>=)
+biometry$age_rec <- cut(biometry$age,
+  include.lowest = TRUE,
+  right = FALSE,
+  dig.lab = 4,
+  breaks = c(18, 35, 50, 80.2026),
+  labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
+(age_tab <- table(biometry$age_rec))
+tabularise(age_tab)
 ```
 
 ```{r}
-chart(data = biometry, ~ alcool %fill=% genre|genre) + 
-  geom_histogram(bins = 20) + 
-  labs(title = "Consommation d'alcool en fonction du genre", y = "Effectif", x = "Consommation d'alcool [verre/sem]", col = "Genre")
+sfilter(biometry, !is.na(age_rec)) #test pour ne pas retirer tous les NA, demander à l'assistant
+chart(data = biometry, ~ alcool %fill=% genre|age_rec) + 
+  geom_histogram(bins = 15) + 
+  labs(title = "Consommation d'alcool en fonction de l'age", y = "Effectifs", x = "Consommation d'alcool [verre/sem]")
+#autre idée 
+#chart(data = biometry, ~ activite_physique %fill=% genre|genre) +
+#geom_boxplot() +
+#labs(title = "Activité physique en fonction du genre", y = "Effectif", x = "Activité physique [min/sem]", col = "Genre")
 ```
 
 ## Calcul d'indices
@@ -197,24 +204,55 @@ chart(data = biometry, ~ alcool %fill=% genre|genre) +
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice4}
-# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry %>.%
+sselect(., masse, taille, genre, age_rec, age) %>.%
+smutate(.,IMC = masse / (taille / 100)^2,
+IMC = case_when(
+IMC < 18.5 ~ "Sous-poids",
+IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
+IMC >= 25 & IMC < 30 ~ "Surpoids",
+IMC >= 30 ~ "Obésité")) -> biometry_imc
+biometry_imc
+biometry_imc$IMC <- as.factor(biometry_imc$IMC)
+
+#Pour utiliser la boite à moustache
+biometry %>.%
+sselect(., masse, taille, genre, age_rec, age) %>.%
+smutate(.,IMC = masse / (taille / 100)^2) -> biometry_imc2
+biometry_imc2
+
+
 
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice4}
-# Graphique ou tableau utilisant l'indice calculé.
-
+#Graphique ou tableau utilisant l'indice calculé.
+#1
+chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
+geom_bar() +
+coord_flip() +
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC")
+#2) Boite à moustache
+chart(biometry_imc2, ~ IMC %fill=% age_rec |genre) +
+geom_boxplot() +
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC") +
+geom_vline(xintercept = 30, color = "red") +
+geom_vline(xintercept = 18.5 , color = "red") +
+geom_vline(xintercept = 25 , color = "red")
 ```
+
+\_
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   ...
+-   Les femmes semblent avoir un IMC plus élévé que les hommes.
 
--   ...
+-   Les IMC des hommes ont une gamme de valeur d'IMC plus étroite.
 
--   ...
+-   De manière générale, que ce soit chez les hommes ou les femmes, on observe une augmentation de l'IMC avec l'age. Notons que chez les femmes seniors, la différence semple plus marquée.
 
 ## Tests d'hypothèses
 
