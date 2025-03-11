@@ -68,18 +68,8 @@ geom_point()
 ```
 
 ```{r}
-biometry <- smutate(biometry,
-  ratio_taille_hanche = tour_taille / tour_hanche,
-  morphotype = case_when(
-    ratio_taille_hanche <= 0.75 ~ "X (Sablier)",
-    ratio_taille_hanche > 0.75 & ratio_taille_hanche < 0.85 ~ "H (Rectangle)",
-    ratio_taille_hanche >= 0.85 ~ "O (Ovale)",
-    tour_hanche / tour_taille >= 1.05 ~ "A (Triangle)",
-    tour_hanche / tour_taille <= 0.95 ~ "V (Triangle inversé)",
-    TRUE ~ "Autre"))
-
 biometry %>.%
-  sgroup_by(., morphotype, genre) %>.%
+  sgroup_by(., genre) %>.%
   ssummarise(.,
     "moyenne de la masse" = fmean(masse),
     "moyenne de la taille" = fmean(taille),
@@ -175,15 +165,29 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice2}
-# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-
+biometry <- smutate(biometry,
+  ratio_taille_hanche = tour_taille / tour_hanche,
+  morphotype = case_when(
+    ratio_taille_hanche <= 0.75 ~ "X (Sablier)",
+    ratio_taille_hanche > 0.75 & ratio_taille_hanche < 0.85 ~ "H (Rectangle)",
+    ratio_taille_hanche >= 0.85 ~ "O (Ovale)",
+    tour_hanche / tour_taille >= 1.05 ~ "A (Triangle)",
+    tour_hanche / tour_taille <= 0.95 ~ "V (Triangle inversé)",
+    TRUE ~ "Autre"))
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice2}
-# Graphique ou tableau utilisant l'indice calculé.
-
+biometry %>.%
+  sgroup_by(., morphotype, genre) %>.%
+  ssummarise(.,
+    "moyenne de la masse" = fmean(masse),
+    "moyenne de la taille" = fmean(taille),
+    "moyenne d'activité physique" = fmean(activite_physique),
+    "n" = fn(morphotype)) ->
+  morpho_tab
+tabularise(morpho_tab, auto.labs = FALSE)
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
