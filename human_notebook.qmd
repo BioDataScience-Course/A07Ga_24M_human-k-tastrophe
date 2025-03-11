@@ -68,7 +68,26 @@ geom_point()
 ```
 
 ```{r}
-tabularise(biometry)
+biometry <- smutate(biometry,
+  ratio_taille_hanche = tour_taille / tour_hanche,
+  morphotype = case_when(
+    ratio_taille_hanche <= 0.75 ~ "X (Sablier)",
+    ratio_taille_hanche > 0.75 & ratio_taille_hanche < 0.85 ~ "H (Rectangle)",
+    ratio_taille_hanche >= 0.85 ~ "O (Ovale)",
+    tour_hanche / tour_taille >= 1.05 ~ "A (Triangle)",
+    tour_hanche / tour_taille <= 0.95 ~ "V (Triangle inversé)",
+    TRUE ~ "Autre"))
+
+biometry %>.%
+  sgroup_by(., morphotype, genre) %>.%
+  ssummarise(.,
+    "moyenne de la masse" = fmean(masse),
+    "moyenne de la taille" = fmean(taille),
+    "moyenne d'activité physique" = fmean(activite_physique),
+    "n" = fn(morphotype)) ->
+  morpho_tab
+tabularise(morpho_tab, auto.labs = FALSE)
+
 ```
 
 ### Description par l'étudiant 3
