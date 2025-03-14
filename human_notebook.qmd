@@ -119,20 +119,31 @@ biometry$age_rec <- cut(biometry$age,
   dig.lab = 4,
   breaks = c(18, 35, 50, 80.2026),
   labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
-(age_tab <- table(biometry$age_rec))
-tabularise(age_tab)
+tab_sex_age <- table(biometry$age_rec, biometry$genre)
+tabularise(tab_sex_age)
 ```
 
+$Interprétation$
+
+Dans la population considérée :
+
+Il y a une majorité de jeunes adultes(64.1%) avec une répartition égale d'homme et de femme.
+
+Les adultes matures et les seniors ont chacun une proportion d'à peu près 20% avec une majorité de femmes à hauteur de 60%.
+
 ```{r}
-sfilter(biometry, !is.na(age_rec)) #test pour ne pas retirer tous les NA, demander à l'assistant
-chart(data = biometry, ~ alcool %fill=% genre|age_rec) + 
-  geom_histogram(bins = 15) + 
-  labs(title = "Consommation d'alcool en fonction de l'age", y = "Effectifs", x = "Consommation d'alcool [verre/sem]")
-#autre idée 
-#chart(data = biometry, ~ activite_physique %fill=% genre|genre) +
-#geom_boxplot() +
-#labs(title = "Activité physique en fonction du genre", y = "Effectif", x = "Activité physique [min/sem]", col = "Genre")
+biometry1 <- drop_na(biometry)
+chart(data = biometry1, ~ alcool %fill=% genre|age_rec) + 
+  geom_boxplot() + 
+  labs(title = "Consommation d'alcool en fonction de l'age et du sexe", y = "Effectifs", x = "Consommation d'alcool [verre/sem]") +
+  geom_vline(xintercept = 0.5, color = "red")
 ```
+
+$Interprétation$
+
+On observe que les femmes boivent assez peu, hors valeurs extrêmes.
+
+Chez les hommes, la consommation est plus active et augmente légèrement avec l'age (la médiane augmente). On observe également que la dispersion des valeurs est plus grande.
 
 ## Calcul d'indices
 
@@ -232,7 +243,7 @@ tabularise(morpho_tab, auto.labs = FALSE)
 
 ```{r indice4}
 #Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-biometry %>.%
+biometry1 %>.%
 sselect(., masse, taille, genre, age_rec, age) %>.%
 smutate(.,IMC = masse / (taille / 100)^2,
 IMC = case_when(
@@ -243,15 +254,14 @@ IMC >= 30 ~ "Obésité")) -> biometry_imc
 biometry_imc
 biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 
-#Pour utiliser la boite à moustache
-biometry %>.%
-sselect(., masse, taille, genre, age_rec, age) %>.%
-smutate(.,IMC = masse / (taille / 100)^2) -> biometry_imc2
-biometry_imc2
-
-
-
+tabularise(biometry_imc) 
 ```
+
+L'IMC est donné par la formule :
+
+$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
+
+L'imc est une norme internationale permettant de mesurer l'excès de poids et l'obésité. Il estime le degré d'obésité ce qui permet d'évaluer les risques pour la santé qui lui sont associés.
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
@@ -261,14 +271,7 @@ biometry_imc2
 chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
 geom_bar() +
 coord_flip() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC")
-#2) Boite à moustache
-chart(biometry_imc2, ~ IMC %fill=% age_rec |genre) +
-geom_boxplot() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC") +
-geom_vline(xintercept = 30, color = "red") +
-geom_vline(xintercept = 18.5 , color = "red") +
-geom_vline(xintercept = 25 , color = "red")
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age")
 ```
 
 \_
@@ -276,8 +279,6 @@ geom_vline(xintercept = 25 , color = "red")
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
 -   Les femmes semblent avoir un IMC plus élévé que les hommes.
-
--   Les IMC des hommes ont une gamme de valeur d'IMC plus étroite.
 
 -   De manière générale, que ce soit chez les hommes ou les femmes, on observe une augmentation de l'IMC avec l'age. Notons que chez les femmes seniors, la différence semple plus marquée.
 
@@ -330,10 +331,15 @@ geom_vline(xintercept = 25 , color = "red")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_t_1}
-
+t.test(data = biometry_imc, taille ~ genre,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
 ```
 
 <!-- Hypothèse nulle et alternative -->
+
+H0 : moyenne(taille des hommes) - moyenne(taille des femmes) = 0
+
+H1 : moyenne(taille des hommes) - moyenne(tailles des femmes) ≠ 0
 
 <!-- Vérification des conditions d'application -->
 
