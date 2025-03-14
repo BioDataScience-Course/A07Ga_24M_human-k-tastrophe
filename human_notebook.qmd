@@ -50,14 +50,19 @@ biometry <- read("data/biometry.rds")
 ### Description par l'étudiant 1
 
 ```{r}
-chart(biometry, masse ~ taille %col=% genre)+
+
+chart(biometry, masse_corr ~ taille %col=% genre)+
   geom_point()+
   xlab("Taille(cm)") +
   ylab("Masse(kg)")
 ```
 
-```{r}
-tabularise(biometry)
+```{r MartinJadouille}
+M2 <- biometry %>.%
+  smutate(.,IMC1 = masse_corr / (taille/100)^2) %>.%
+  sselect(.,id,genre,masse_std_ref,masse_std,masse,IMC1)%>.%
+  sarrange(.,genre)
+tabularise(M2)
 ```
 
 ### Description par l'étudiant 2
@@ -144,14 +149,30 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 
 ```{r indice1}
 # Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry<-biometry %>.%
+  smutate(.,group_age = cut(age, 
+    breaks = c(-Inf,17,25, 64, Inf), 
+    labels = c("Moins de 18 ans","18-25", "26-64","65+"),right = TRUE))
 
+ biometry <- biometry %>.%
+  smutate(.,sommeil_optimal = case_when(
+    group_age == "Moins de 18 ans"~9,
+    group_age == "18-25" ~8,
+    group_age =="26-64"~7.5,
+    group_age == "65+" ~7.5
+  ))
+
+biometry <- biometry %>.%
+  smutate(.,dette_sommeil = sommeil_optimal - sommeil)
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice1}
 # Graphique ou tableau utilisant l'indice calculé.
-
+chart(data= biometry, dette_sommeil ~ masse_corr %col=% genre)+
+  geom_point()
+# faire avec un imc au lieu de masse
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
@@ -293,10 +314,15 @@ geom_vline(xintercept = 25 , color = "red")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_1}
+# imc_tab <- 
 
 ```
 
 <!--% Hypothèse nulle et alternative -->
+
+H0 :
+
+H1 :
 
 <!--% Vérification des conditions d'application -->
 
