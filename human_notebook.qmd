@@ -56,8 +56,12 @@ chart(biometry, masse ~ taille %col=% genre)+
   ylab("Masse(kg)")
 ```
 
-```{r}
-tabularise(biometry)
+```{rMartinJadouille}
+M2 <- biometry %>.%
+  smutate(.,IMC1 = masse / (taille/100)^2) %>.%
+  sselect(.,id,genre,masse_std_ref,masse_std,masse,IMC1)%>.%
+  sarrange(.,genre)
+tabularise(M2)
 ```
 
 ### Description par l'étudiant 2
