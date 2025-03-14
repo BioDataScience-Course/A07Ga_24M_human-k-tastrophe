@@ -63,19 +63,21 @@ tabularise(biometry)
 ### Description par l'étudiant 2
 
 ```{r}
-chart(biometry, masse ~ tour_hanche %col=% genre) +
-geom_point()
+chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
+geom_point() +
+  ylab("Masse des individus (kg)")+
+  xlab("Taille du tour de hanche (cm)")
 ```
 
 ```{r}
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
-    "moyenne de la masse" = fmean(masse),
-    "moyenne de la taille" = fmean(taille),
-    "moyenne d'activité physique" = fmean(activite_physique),
-    "n" = fn(morphotype)) ->
-  morpho_tab
+    "moyenne de la masse (kg)" = fmean(masse_corr),
+    "moyenne de la taille (cm)" = fmean(taille),
+    "moyenne d'activité physique (min)" = fmean(activite_physique),
+    "n" = fn(masse_corr)) ->
+  Moyenne_tab
 tabularise(morpho_tab, auto.labs = FALSE)
 
 ```
@@ -165,29 +167,32 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice2}
-biometry <- smutate(biometry,
-  ratio_taille_hanche = tour_taille / tour_hanche,
-  morphotype = case_when(
-    ratio_taille_hanche <= 0.75 ~ "X (Sablier)",
-    ratio_taille_hanche > 0.75 & ratio_taille_hanche < 0.85 ~ "H (Rectangle)",
-    ratio_taille_hanche >= 0.85 ~ "O (Ovale)",
-    tour_hanche / tour_taille >= 1.05 ~ "A (Triangle)",
-    tour_hanche / tour_taille <= 0.95 ~ "V (Triangle inversé)",
-    TRUE ~ "Autre"))
+ RTH_Categorie <- smutate(biometry,
+  ratio_taille_hanche = tour_taille / tour_hanche)
+  
+  RTH_Categorie <- smutate(RTH_Categorie,
+   RTH = ifelse(genre == "F",
+      case_when(
+         ratio_taille_hanche < 0.65 ~ "Obésité gynoïde",
+         ratio_taille_hanche >= 0.65 & ratio_taille_hanche < 0.8 ~ "Normal",
+         ratio_taille_hanche >= 0.8 ~ "Obesité androïde"), 
+      case_when(
+    ratio_taille_hanche < 0.85 ~ "Obésité gynoïde",
+    ratio_taille_hanche >= 0.85 & ratio_taille_hanche < 0.95 ~ "Normal",
+    ratio_taille_hanche >= 0.95 ~ "Obesité androïde")))
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice2}
-biometry %>.%
-  sgroup_by(., morphotype, genre) %>.%
+RTH_Categorie %>.%
+  sgroup_by(., RTH) %>.%
   ssummarise(.,
-    "moyenne de la masse" = fmean(masse),
-    "moyenne de la taille" = fmean(taille),
-    "moyenne d'activité physique" = fmean(activite_physique),
-    "n" = fn(morphotype)) ->
-  morpho_tab
-tabularise(morpho_tab, auto.labs = FALSE)
+    "Moyenne de la masse" = fmean(masse_corr),
+    "Moyenne de la taille" = fmean(taille),
+    "Moyenne d'activité physique" = fmean(activite_physique),
+    "Effectif" = fn(RTH)) -> RTH_tab
+tabularise(RTH_tab, auto.labs = FALSE)
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
