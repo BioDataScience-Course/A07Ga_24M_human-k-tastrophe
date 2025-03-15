@@ -115,31 +115,44 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 ### Description par l'étudiant 4
 
 ```{r}
-#découpage en classe de différentes tranches d'age (18-35,35-50,50>=)
+# Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
 biometry$age_rec <- cut(biometry$age,
   include.lowest = TRUE,
   right = FALSE,
   dig.lab = 4,
   breaks = c(18, 35, 50, 80.2026),
   labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
+
+# Tableau de contingence
 tab_sex_age <- table(biometry$age_rec, biometry$genre)
+
+# Noms des variables et de leurs niveaux.
+#NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
+
+dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
+names(dimnames(tab_sex_age)) <- c("Classe d'âge", "Genre")
+
+
+# Affichage du tableau
 tabularise(tab_sex_age)
+
 ```
 
 $Interprétation$
 
 Dans la population considérée :
 
-Il y a une majorité de jeunes adultes(64.1%) avec une répartition égale d'homme et de femme.
+Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
 
-Les adultes matures et les seniors ont chacun une proportion d'à peu près 20% avec une majorité de femmes à hauteur de 60%.
+Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
+
+Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
 
 ```{r}
 biometry1 <- drop_na(biometry)
 chart(data = biometry1, ~ alcool %fill=% genre|age_rec) + 
   geom_boxplot() + 
-  labs(title = "Consommation d'alcool en fonction de l'age et du sexe", y = "Effectifs", x = "Consommation d'alcool [verre/sem]") +
-  geom_vline(xintercept = 0.5, color = "red")
+  labs(title = "Consommation d'alcool en fonction de l'age et du sexe", y = "Effectifs", x = "Consommation d'alcool [verre/sem]") 
 ```
 
 $Interprétation$
@@ -283,7 +296,7 @@ L'IMC est donné par la formule :
 
 $IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
 
-L'imc est une norme internationale permettant de mesurer l'excès de poids et l'obésité. Il estime le degré d'obésité ce qui permet d'évaluer les risques pour la santé qui lui sont associés.
+L'IMC est une norme internationale permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés.
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
@@ -293,16 +306,22 @@ L'imc est une norme internationale permettant de mesurer l'excès de poids et l'
 chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
 geom_bar() +
 coord_flip() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age")
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age") + 
+  geom_hline(yintercept = 10, color = "red") + 
+  geom_hline(yintercept = 20, color = "red")
 ```
 
 \_
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   Les femmes semblent avoir un IMC plus élévé que les hommes.
+-   Il y a plus de femmes en sous-poids que les hommes.
 
--   De manière générale, que ce soit chez les hommes ou les femmes, on observe une augmentation de l'IMC avec l'age. Notons que chez les femmes seniors, la différence semple plus marquée.
+-   La majorité de la population est en sous-poids ou de corpulence normale.
+
+-   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et son majoritairement de corpulence normale ou en surpoids.
+
+-   Les seniors, surtout les femmes, sont plus représentés en surpoids ou obèse. (notons qu'elles sont présentent en majorité) ce qui pourrait suggérer une prise de poids avec l'age. Chez les adultes matures, on observe plus de femme obèses que d'hommes obèses mais il est difficile de tirer des conclusions car ils ne représentent que 16.2% de la population considérée.
 
 ## Tests d'hypothèses
 
@@ -364,14 +383,20 @@ t.test(data = biometry_imc, taille ~ genre,
 
 <!-- Hypothèse nulle et alternative -->
 
-H0 : moyenne(taille des hommes) - moyenne(taille des femmes) = 0
+$H_0: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} = 0$
 
-H1 : moyenne(taille des hommes) - moyenne(tailles des femmes) ≠ 0
+$H_1: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} \neq 0$
 
 <!-- Vérification des conditions d'application -->
 
 ```{r test_t_1}
-
+#Le test de t student suppose que la distribution est normale, il faut donc obtenir une courbe en cloche lorsqu'on affiche les données à l'aide d'un histogramme. 
+# Rappel : distribution de la population…
+  #_normale_, alors le test basé sur la distribution t de Student   sera exact
+  #_approximativement normale_, le test sera approximativement exact
+  #_non normale_, le test sera approximativement exact si n est grand.
+chart(data = biometry_imc, ~ taille) +
+  geom_histogram(bins = 30)
 ```
 
 <!-- Interprétation statistique et biologique -->
