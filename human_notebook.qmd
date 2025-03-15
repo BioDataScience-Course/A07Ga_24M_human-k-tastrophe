@@ -397,6 +397,17 @@ $H_1: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} \neq 0$
   #_non normale_, le test sera approximativement exact si n est grand.
 chart(data = biometry_imc, ~ taille) +
   geom_histogram(bins = 30)
+#Pour utiliser un test t de student, il faut que la variance entre les deux groupes considérés soit similaire.
+biometry %>.%
+  sgroup_by(., genre) %>.% 
+  ssummarise(.,
+    `moyenne taille`    = fmean(taille),
+    `médiane taille`    = fmedian(taille),
+    `écart type taille` = fsd(taille),
+    `variance taille` = fsd(taille)^2,
+    `n`                 = fn(taille)) ->
+  taille_genre
+tabularise(taille_genre)
 ```
 
 <!-- Interprétation statistique et biologique -->
