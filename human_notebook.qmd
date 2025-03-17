@@ -58,11 +58,15 @@ chart(biometry, masse_corr ~ taille %col=% genre)+
 ```
 
 ```{r MartinJadouille}
-M2 <- biometry %>.%
-  smutate(.,IMC1 = masse_corr / (taille/100)^2) %>.%
-  sselect(.,id,genre,masse_std_ref,masse_std,masse,IMC1)%>.%
-  sarrange(.,genre)
-tabularise(M2)
+M1<- biometry %>.%
+  sgroup_by(., genre) %>.%
+  ssummarise(.,
+    "moyenne du tour de poignet" = fmean(tour_poignet),
+    "moyenne de la taille" = fmean(tour_taille),
+    "moyenne du tour de hanche" = fmean(tour_hanche),
+    "moyenne de la masse" = fmean(masse_corr),
+    "n" = fn(genre))
+tabularise(M1)
 ```
 
 ### Description par l'étudiant 2
@@ -147,7 +151,7 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 
 ```{r indice1}
 # Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-biometry<-biometry %>.%
+biometry <- biometry %>.%
   smutate(.,group_age = cut(age, 
     breaks = c(-Inf,17,25, 64, Inf), 
     labels = c("Moins de 18 ans","18-25", "26-64","65+"),right = TRUE))
@@ -166,9 +170,14 @@ biometry <- biometry %>.%
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
+Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
+
 ```{r plot_indice1}
 # Graphique ou tableau utilisant l'indice calculé.
-chart(data= biometry, dette_sommeil ~ masse_corr %col=% genre)+
+biometry <- biometry %>.%
+  smutate(.,IMC = masse_corr / (taille/100)^2)
+
+chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% group_age)+
   geom_point()
 # faire avec un imc au lieu de masse
 ```
