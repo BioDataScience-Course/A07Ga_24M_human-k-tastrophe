@@ -50,32 +50,43 @@ biometry <- read("data/biometry.rds")
 ### Description par l'étudiant 1
 
 ```{r}
-chart(biometry, masse ~ taille %col=% genre)+
+
+chart(biometry, masse_corr ~ taille %col=% genre)+
   geom_point()+
   xlab("Taille(cm)") +
   ylab("Masse(kg)")
 ```
 
-```{r}
-tabularise(biometry)
+```{r MartinJadouille}
+M1<- biometry %>.%
+  sgroup_by(., genre) %>.%
+  ssummarise(.,
+    "moyenne du tour de poignet" = fmean(tour_poignet),
+    "moyenne de la taille" = fmean(tour_taille),
+    "moyenne du tour de hanche" = fmean(tour_hanche),
+    "moyenne de la masse" = fmean(masse_corr),
+    "n" = fn(genre))
+tabularise(M1)
 ```
 
 ### Description par l'étudiant 2
 
 ```{r}
-chart(biometry, masse ~ tour_hanche %col=% genre) +
-geom_point()
+chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
+geom_point() +
+  ylab("Masse des individus (kg)")+
+  xlab("Taille du tour de hanche (cm)")
 ```
 
 ```{r}
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
-    "moyenne de la masse" = fmean(masse),
-    "moyenne de la taille" = fmean(taille),
-    "moyenne d'activité physique" = fmean(activite_physique),
-    "n" = fn(morphotype)) ->
-  morpho_tab
+    "moyenne de la masse (kg)" = fmean(masse_corr),
+    "moyenne de la taille (cm)" = fmean(taille),
+    "moyenne d'activité physique (min)" = fmean(activite_physique),
+    "n" = fn(masse_corr)) ->
+  Moyenne_tab
 tabularise(morpho_tab, auto.labs = FALSE)
 
 ```
@@ -108,27 +119,51 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 ### Description par l'étudiant 4
 
 ```{r}
-#découpage en classe de différentes tranches d'age (18-35,35-50,50>=)
+# Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
 biometry$age_rec <- cut(biometry$age,
   include.lowest = TRUE,
   right = FALSE,
   dig.lab = 4,
   breaks = c(18, 35, 50, 80.2026),
   labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
-(age_tab <- table(biometry$age_rec))
-tabularise(age_tab)
+
+# Tableau de contingence
+tab_sex_age <- table(biometry$age_rec, biometry$genre)
+
+# Noms des variables et de leurs niveaux.
+#NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
+
+dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
+names(dimnames(tab_sex_age)) <- c("Classe d'âge", "Genre")
+
+
+# Affichage du tableau
+tabularise(tab_sex_age)
+
 ```
 
+$Interprétation$
+
+Dans la population considérée :
+
+Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
+
+Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
+
+Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+
 ```{r}
-sfilter(biometry, !is.na(age_rec)) #test pour ne pas retirer tous les NA, demander à l'assistant
-chart(data = biometry, ~ alcool %fill=% genre|age_rec) + 
-  geom_histogram(bins = 15) + 
-  labs(title = "Consommation d'alcool en fonction de l'age", y = "Effectifs", x = "Consommation d'alcool [verre/sem]")
-#autre idée 
-#chart(data = biometry, ~ activite_physique %fill=% genre|genre) +
-#geom_boxplot() +
-#labs(title = "Activité physique en fonction du genre", y = "Effectif", x = "Activité physique [min/sem]", col = "Genre")
+biometry1 <- drop_na(biometry)
+chart(data = biometry1, ~ alcool %fill=% genre|age_rec) + 
+  geom_boxplot() + 
+  labs(title = "Consommation d'alcool en fonction de l'age et du sexe", y = "Effectifs", x = "Consommation d'alcool [verre/sem]") 
 ```
+
+$Interprétation$
+
+On observe que les femmes boivent assez peu, hors valeurs extrêmes.
+
+Chez les hommes, la consommation est plus active et augmente légèrement avec l'age (la médiane augmente). On observe également que la dispersion des valeurs est plus grande.
 
 ## Calcul d'indices
 
@@ -142,14 +177,35 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 
 ```{r indice1}
 # Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry <- biometry %>.%
+  smutate(.,group_age = cut(age, 
+    breaks = c(-Inf,17,25, 64, Inf), 
+    labels = c("Moins de 18 ans","18-25", "26-64","65+"),right = TRUE))
 
+ biometry <- biometry %>.%
+  smutate(.,sommeil_optimal = case_when(
+    group_age == "Moins de 18 ans"~9,
+    group_age == "18-25" ~8,
+    group_age =="26-64"~7.5,
+    group_age == "65+" ~7.5
+  ))
+
+biometry <- biometry %>.%
+  smutate(.,dette_sommeil = sommeil_optimal - sommeil)
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
+Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
+
 ```{r plot_indice1}
 # Graphique ou tableau utilisant l'indice calculé.
+biometry <- biometry %>.%
+  smutate(.,IMC = masse_corr / (taille/100)^2)
 
+chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% group_age)+
+  geom_point()
+# faire avec un imc au lieu de masse
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
@@ -165,29 +221,32 @@ chart(data = biometry, ~ alcool %fill=% genre|age_rec) +
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice2}
-biometry <- smutate(biometry,
-  ratio_taille_hanche = tour_taille / tour_hanche,
-  morphotype = case_when(
-    ratio_taille_hanche <= 0.75 ~ "X (Sablier)",
-    ratio_taille_hanche > 0.75 & ratio_taille_hanche < 0.85 ~ "H (Rectangle)",
-    ratio_taille_hanche >= 0.85 ~ "O (Ovale)",
-    tour_hanche / tour_taille >= 1.05 ~ "A (Triangle)",
-    tour_hanche / tour_taille <= 0.95 ~ "V (Triangle inversé)",
-    TRUE ~ "Autre"))
+ RTH_Categorie <- smutate(biometry,
+  ratio_taille_hanche = tour_taille / tour_hanche)
+  
+  RTH_Categorie <- smutate(RTH_Categorie,
+   RTH = ifelse(genre == "F",
+      case_when(
+         ratio_taille_hanche < 0.65 ~ "Obésité gynoïde",
+         ratio_taille_hanche >= 0.65 & ratio_taille_hanche < 0.8 ~ "Normal",
+         ratio_taille_hanche >= 0.8 ~ "Obesité androïde"), 
+      case_when(
+    ratio_taille_hanche < 0.85 ~ "Obésité gynoïde",
+    ratio_taille_hanche >= 0.85 & ratio_taille_hanche < 0.95 ~ "Normal",
+    ratio_taille_hanche >= 0.95 ~ "Obesité androïde")))
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice2}
-biometry %>.%
-  sgroup_by(., morphotype, genre) %>.%
+RTH_Categorie %>.%
+  sgroup_by(., RTH) %>.%
   ssummarise(.,
-    "moyenne de la masse" = fmean(masse),
-    "moyenne de la taille" = fmean(taille),
-    "moyenne d'activité physique" = fmean(activite_physique),
-    "n" = fn(morphotype)) ->
-  morpho_tab
-tabularise(morpho_tab, auto.labs = FALSE)
+    "Moyenne de la masse" = fmean(masse_corr),
+    "Moyenne de la taille" = fmean(taille),
+    "Moyenne d'activité physique" = fmean(activite_physique),
+    "Effectif" = fn(RTH)) -> RTH_tab
+tabularise(RTH_tab, auto.labs = FALSE)
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
@@ -240,7 +299,7 @@ ifelse(genre =="H" smutate(Consommation_d_alcool_modérée
 
 ```{r indice4}
 #Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-biometry %>.%
+biometry1 %>.%
 sselect(., masse, taille, genre, age_rec, age) %>.%
 smutate(.,IMC = masse / (taille / 100)^2,
 IMC = case_when(
@@ -251,15 +310,14 @@ IMC >= 30 ~ "Obésité")) -> biometry_imc
 biometry_imc
 biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 
-#Pour utiliser la boite à moustache
-biometry %>.%
-sselect(., masse, taille, genre, age_rec, age) %>.%
-smutate(.,IMC = masse / (taille / 100)^2) -> biometry_imc2
-biometry_imc2
-
-
-
+tabularise(biometry_imc) 
 ```
+
+L'IMC est donné par la formule :
+
+$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
+
+L'IMC est une norme internationale permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés.
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
@@ -269,25 +327,22 @@ biometry_imc2
 chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
 geom_bar() +
 coord_flip() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC")
-#2) Boite à moustache
-chart(biometry_imc2, ~ IMC %fill=% age_rec |genre) +
-geom_boxplot() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC") +
-geom_vline(xintercept = 30, color = "red") +
-geom_vline(xintercept = 18.5 , color = "red") +
-geom_vline(xintercept = 25 , color = "red")
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age") + 
+  geom_hline(yintercept = 10, color = "red") + 
+  geom_hline(yintercept = 20, color = "red")
 ```
 
 \_
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   Les femmes semblent avoir un IMC plus élévé que les hommes.
+-   Il y a plus de femmes en sous-poids que les hommes.
 
--   Les IMC des hommes ont une gamme de valeur d'IMC plus étroite.
+-   La majorité de la population est en sous-poids ou de corpulence normale.
 
--   De manière générale, que ce soit chez les hommes ou les femmes, on observe une augmentation de l'IMC avec l'age. Notons que chez les femmes seniors, la différence semple plus marquée.
+-   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et son majoritairement de corpulence normale ou en surpoids.
+
+-   Les seniors, surtout les femmes, sont plus représentés en surpoids ou obèse. (notons qu'elles sont présentent en majorité) ce qui pourrait suggérer une prise de poids avec l'age. Chez les adultes matures, on observe plus de femme obèses que d'hommes obèses mais il est difficile de tirer des conclusions car ils ne représentent que 16.2% de la population considérée.
 
 ## Tests d'hypothèses
 
@@ -300,10 +355,15 @@ geom_vline(xintercept = 25 , color = "red")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_1}
+# imc_tab <- 
 
 ```
 
 <!--% Hypothèse nulle et alternative -->
+
+H0 :
+
+H1 :
 
 <!--% Vérification des conditions d'application -->
 
@@ -338,15 +398,37 @@ geom_vline(xintercept = 25 , color = "red")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_t_1}
-
+t.test(data = biometry_imc, taille ~ genre,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE)
 ```
 
 <!-- Hypothèse nulle et alternative -->
 
+$H_0: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} = 0$
+
+$H_1: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} \neq 0$
+
 <!-- Vérification des conditions d'application -->
 
 ```{r test_t_1}
-
+#Le test de t student suppose que la distribution est normale, il faut donc obtenir une courbe en cloche lorsqu'on affiche les données à l'aide d'un histogramme. 
+# Rappel : distribution de la population…
+  #_normale_, alors le test basé sur la distribution t de Student   sera exact
+  #_approximativement normale_, le test sera approximativement exact
+  #_non normale_, le test sera approximativement exact si n est grand.
+chart(data = biometry_imc, ~ taille) +
+  geom_histogram(bins = 30)
+#Pour utiliser un test t de student, il faut que la variance entre les deux groupes considérés soit similaire.
+biometry %>.%
+  sgroup_by(., genre) %>.% 
+  ssummarise(.,
+    `moyenne taille`    = fmean(taille),
+    `médiane taille`    = fmedian(taille),
+    `écart type taille` = fsd(taille),
+    `variance taille` = fsd(taille)^2,
+    `n`                 = fn(taille)) ->
+  taille_genre
+tabularise(taille_genre)
 ```
 
 <!-- Interprétation statistique et biologique -->
