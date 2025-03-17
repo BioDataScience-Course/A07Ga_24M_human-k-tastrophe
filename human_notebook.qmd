@@ -57,6 +57,12 @@ chart(biometry, masse_corr ~ taille %col=% genre)+
   ylab("Masse(kg)")
 ```
 
+Analyse:
+
+-   On remarque que les femmes sont, en grande majorité, plus petites que les hommes.
+
+-   Les individus ayant les masses les plus faibles sont des femmes, tandis que ceux ayant les masses les plus importantes sont des hommes.
+
 ```{r MartinJadouille}
 M1<- biometry %>.%
   sgroup_by(., genre) %>.%
@@ -68,6 +74,10 @@ M1<- biometry %>.%
     "n" = fn(genre))
 tabularise(M1)
 ```
+
+-   On remarque que les hommes ont une moyenne de tour de poignet, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
+
+-   Deux genres ont été échantillonnés : les femmes et les hommes, pour un total de 144 personnes. Les deux genres ne sont pas équilibrés, il y a 14 femmes de plus que d'hommes
 
 ### Description par l'étudiant 2
 
@@ -203,18 +213,17 @@ Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
 biometry <- biometry %>.%
   smutate(.,IMC = masse_corr / (taille/100)^2)
 
-chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% group_age)+
+chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% alimentation)+
   geom_point()
-# faire avec un imc au lieu de masse
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   ...
+-   Une grande partie des individus sont en manque de sommeil.
 
--   ...
+-   Presque tous les carnivores ont une dette de sommeil. Cela pourrait être expliqué par certaines molécules comme la tyrosine dans certaines viandes.
 
--   ...
+-   On ne remarque pas de tendance particulière et encore moins celle attendue. Normalement, les personnes ayant une dette de sommeil ont un IMC plus élevé.
 
 ### Indice 2
 
@@ -343,15 +352,16 @@ labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_1}
-# imc_tab <- 
+imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
 
+chisq.test(imc_tabcontingence)
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
-H0 :
+H0 : IMC homme = IMC femme
 
-H1 :
+H1 : IMC homme **≠** IMC femme
 
 <!--% Vérification des conditions d'application -->
 
