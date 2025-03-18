@@ -81,25 +81,34 @@ tabularise(M1)
 
 ### Description par l'étudiant 2
 
-```{r}
+```{r description1_Louise_DUBRECQ}
 chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
 geom_point() +
   ylab("Masse des individus (kg)")+
   xlab("Taille du tour de hanche (cm)")
 ```
 
-```{r}
+-   Observation d'une corrélation positive (plus la masse est haute, plus la taille du tour de hanche l'est aussi).
+-   Les hommes et les femmes suivent les mêmes tendances mais les hommes ont généralement une masse plus haute pour la même taille de tour de hanche que les femmes.
+-   Il y a une dispersion chez les hommes avec des masses plus élevées et chez les femmes avec des tour de tailles plus larges.
+
+```{r description2_Louise_DUBRECQ}
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
     "moyenne de la masse (kg)" = fmean(masse_corr),
     "moyenne de la taille (cm)" = fmean(taille),
-    "moyenne d'activité physique (min)" = fmean(activite_physique),
+    "moyenne d'activités physiques (min)" = fmean(activite_physique),
+    "moyenne de l'IMC" = fmean(IMC),
     "n" = fn(masse_corr)) ->
   Moyenne_tab
-tabularise(morpho_tab, auto.labs = FALSE)
+tabularise(Moyenne_tab, auto.labs = FALSE)
 
 ```
+
+-   Les hommes font en moyenne plus d'activités physiques de les femmes.
+-   Les hommes sont en moyenne plus grand et ont plus de masse que les femmes.
+-   Il n'y a pas de nette différence entre la moyenne des IMC des hommes et des femmes.
 
 ### Description par l'étudiant 3
 
@@ -229,7 +238,7 @@ chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% alimentation
 
 <!--% Description et formule ci-dessous. -->
 
-```{r indice2}
+```{r indice2 LouiseDUBRECQ}
  RTH_Categorie <- smutate(biometry,
   ratio_taille_hanche = tour_taille / tour_hanche)
   
@@ -247,24 +256,37 @@ chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% alimentation
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
-```{r plot_indice2}
-RTH_Categorie %>.%
-  sgroup_by(., RTH) %>.%
-  ssummarise(.,
-    "Moyenne de la masse" = fmean(masse_corr),
-    "Moyenne de la taille" = fmean(taille),
-    "Moyenne d'activité physique" = fmean(activite_physique),
-    "Effectif" = fn(RTH)) -> RTH_tab
-tabularise(RTH_tab, auto.labs = FALSE)
+```{r plot_indice2 LouiseDUBRECQ}
+
+
+a <- chart(RTH_Categorie[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "Masse des femmes selon le type d'obésité",
+       x = "Type d'obésité",
+       y = "Masse (kg)")
+
+b <- chart(RTH_Categorie[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "Masse des hommes selon le type d'obésité",
+       x = "Type d'obésité",
+       y = "Masse (kg)")
+
+
+
+combine_charts(list(a, b))
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   ...
+-   L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre.
 
--   ...
+-   Variabilité importante des masses en obésité androïde.
 
--   ...
+-   Il n'y a pas d'obesité gynoïde chez les femmes.
+
+-   Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde"
+
+-   La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
 
 ### Indice 3
 
@@ -392,18 +414,27 @@ Biologique : Nous n'observons pas de manière significative qu'il y a une relati
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_2}
-
+RTH_tabchi2 <- table(RTH_Categorie$sucre, RTH_Categorie$RTH)
+tabularise(RTH_tabchi2)
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+-   **H₀** : Il n'y a **pas de relation** entre le RTH et la consommation de sucre.
+
+<!-- -->
+
+-   **H₁** : Il existe **une association** entre le RTH et la consommation de sucre.
+
 <!--% Vérification des conditions d'application -->
 
 ```{r test_chi2_2}
-
+chisq.test(RTH_tabchi2)
 ```
 
 <!--% Interprétation statistique et biologique -->
+
+-   
 
 <!--# Travaillez jusqu'ici pour le module 7. -->
 
