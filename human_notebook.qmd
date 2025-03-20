@@ -94,15 +94,6 @@ tabularise(morpho_tab, auto.labs = FALSE)
 ### Description par l'étudiant 3
 
 ```{r}
-chart(data = biometry, masse_corr ~ genre %col=% genre %fill=% sucre)+
-  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))+
-  xlab("Genre")+
-  ylab("Masse en kg")
-
-  
-```
-
-```{r}
 chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
   xlab("Genre") +
   ylab("Taille en m") +
@@ -113,7 +104,50 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
  # geom_bar(width = 1) + 
   #coord_polar("y", start = 0) +
   #theme_void() +
-  #scale_fill_viridis_d()
+  #scale_fill_viridis_d()chart(data = biometry, masse_corr ~ genre %col=% genre %fill=% sucre)+
+ # geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))+
+  #xlab("Genre")+
+  #ylab("Masse en kg")
+
+  
+```
+
+```{r}
+biometry <- biometry %>%
+  smutate(
+    Consommation_occasionnelle = case_when(
+      alcool >= 12 ~ "Oui",
+      TRUE ~ "Non"
+    ),
+    Consommation_modérée = case_when(
+      genre == "H" & alcool >= 12 & alcool <= 56 ~ "Oui",
+      genre == "F" & alcool >= 12 & alcool <= 28 ~ "Oui",
+      TRUE ~ "Non"
+    ),
+    Consommation_risque = case_when(
+      genre == "H"  & alcool > 56 ~ "Oui",
+      genre == "F"  & alcool > 28 ~ "Oui" ,
+      TRUE ~ "Non" ),
+    Consommation_alcool = case_when(alcool >= 1 ~ "Oui",
+      TRUE ~ "Non")
+  ) -> biometry
+
+FF<- biometry %>.% 
+ sgroup_by(., genre) %>.%
+  ssummarise(.,
+    "Conso_occasionnelle" = fn(Consommation_occasionnelle),
+    "Conso_modérée" = fn(Consommation_modérée),
+    "Conso_risque" = fn(Consommation_risque),
+    "Conso_alcool" = fn(Consommation_alcool),
+    "N" = fn(genre)
+    )
+tabularise(FF)
+
+#biometry2 <- biometry %>% #
+ # sfilter(age >= 18 & age <= 26) %>% 
+ # sselect(genre, masse, age, Consommation_modérée, Consommation_occasionnelle, Consomation_alcool )  %>% 
+#arrange(genre, age)
+#tabularise(biometry2)
 ```
 
 ### Description par l'étudiant 4
@@ -262,20 +296,10 @@ tabularise(RTH_tab, auto.labs = FALSE)
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice3}
-# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-#biometry %>.%
- # sselect(., alcool, masse, sexe, age) %>.%
-  #smutate(., 
-  #"Consommation d’alcool occasionnelle" = case_when( 
-#    sex == ("F" & "M"), alcool>= 12*12 & alcool <= 12/4 ) , )
-biometry %>%
-  select(alcool, masse, genre, age) %>%
-  smutate(
-Consommation_d_alcool_occasionnelle = case_when(
-       alcool  >= 12 ~ "Oui",TRUE ~ "Non"))
 
-ifelse(genre =="H" smutate(Consommation_d_alcool_modérée 
-      alcool >= 12 & alcool <= 28 ~ 
+# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+
+
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
