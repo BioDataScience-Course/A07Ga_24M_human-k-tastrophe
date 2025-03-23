@@ -155,9 +155,9 @@ FF<- biometry %>.%
  sgroup_by(., genre) %>.%
   ssummarise(.,
     "Conso_occasionnelle" = fn(Consommation_occasionnelle),
-    "Conso_modérée" = fn(Consommation_modérée),
-    "Conso_risque" = fn(Consommation_risque),
-    "Conso_alcool" = fn(Consommation_alcool),
+    "Conso_modérée" = fn(Consommation_modérée == "Oui"),
+    "Conso_risque" = fn(Consommation_risque == "Oui"),
+    "Conso_alcool" = fn(Consommation_alcool == "Oui"),
     "N" = fn(genre)
     )
 tabularise(FF)
@@ -330,6 +330,13 @@ combine_charts(list(a, b))
 
 # Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
 
+#IMG=(1.51×IMC)+(0.70× age)−(3.6×sexe)−1.4
+
+biometry <- biometry %>.%
+  smutate(., 
+    genre_img = ifelse(genre == "H", 1, 0),
+    Indice_de_masse_grasse = ((1.2 * IMC) + (0.23 * age) - (10.8 * genre_img) - 5.4))
+ 
 
 ```
 
@@ -337,7 +344,8 @@ combine_charts(list(a, b))
 
 ```{r plot_indice3}
 # Graphique ou tableau utilisant l'indice calculé.
-
+chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| alimentation)+
+  geom_boxplot()
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
@@ -523,7 +531,8 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_t_2}
-
+t.test(data = biometry, Indice_de_masse_grasse ~ genre,
+  alternative = "two.sided", conf.level = 0.95, var.equal = TRUE )
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -531,7 +540,37 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 <!--% Vérification des conditions d'application -->
 
 ```{r test_t_2}
+#Pour utiliser un test t de student, il faut que la variance entre les deux groupes considérés soit similaire. Dans le cas contraire, changer "var.equal = TRUE" -> ""var.equal = FALSE"
+biometry %>.%
+  sgroup_by(., genre) %>.% 
+  ssummarise(.,
+    `moyenne IMG`    = fmean(Indice_de_masse_grasse),
+    `médiane IMG`    = fmedian(Indice_de_masse_grasse),
+    `écart type IMG` = fsd(Indice_de_masse_grasse),
+    `variance IMG` = fsd(Indice_de_masse_grasse)^2,
+    `nIMG`                 = fn(Indice_de_masse_grasse)) ->
+  HG
+tabularise(HG)
 
+#Le test de t student suppose que la distribution est normale. On peut vérifier cette distribution grâce à un graphique quantile-quantile
+# Rappel : distribution de la population…
+  #_normale_, alors le test basé sur la distribution t de Student   sera exact
+  #_approximativement normale_, le test sera approximativement exact
+  #_non normale_, le test sera approximativement exact si n est grand.
+# Calcul des quantiles observés
+probas <- seq(0, 1, length.out = length(biometry$Indice_de_masse_grasse), na.rm = TRUE)
+q_obs_IMG <- quantile(biometry$Indice_de_masse_grasse, probs = probas, na.rm = TRUE)
+
+# Quantiles observés dans l'échantillon
+q_obs <- quantile(biometry$Indice_de_masse_grasse, probs = probas, na.rm = TRUE)
+# quantiles theoriques selon la distribution normale réduite
+q_theo <- qnorm(probas, mean = 0, sd = 1)
+qq <- dtx(q_obs = q_obs, q_theo = q_theo)
+qq
+
+# QQ-plot avec car::qqPlot
+car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
+  envelope = 0.95, col = "Black", ylab = "Indice_de_masse_grasse")
 ```
 
 <!--% Interprétation statistique et biologique -->
