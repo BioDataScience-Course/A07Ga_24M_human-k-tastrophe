@@ -132,41 +132,33 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 ```
 
 ```{r}
+library(ggpubr)
+#biometry <- biometry %>%
+  #smutate(
+  #  Non_consommation_alcool = case_when(alcool < 1 ~ "Oui",
+  #    TRUE ~ "Non"),
+  #  Consommation_occasionnelle = case_when(
+  #    alcool <= 12 ~ "Oui",
+  #    TRUE ~ "Non"
+  #  ),
+  #  Consommation_modérée = case_when(
+  #    genre == "H" & alcool >= 12 & alcool <= 56 ~ "Oui",
+  #    genre == "F" & alcool >= 12 & alcool <= 28 ~ "Oui",
+  #    TRUE ~ "Non"
+  #  ),
+  #  Consommation_risque = case_when(
+  #    genre == "H"  & alcool > 56 ~ "Oui",
+  #    genre == "F"  & alcool > 28 ~ "Oui" ,
+ #     TRUE ~ "Non" )
+#  ) -> biometry
+
 biometry <- biometry %>%
   smutate(
-    Consommation_occasionnelle = case_when(
-      alcool >= 12 ~ "Oui",
-      TRUE ~ "Non"
-    ),
-    Consommation_modérée = case_when(
-      genre == "H" & alcool >= 12 & alcool <= 56 ~ "Oui",
-      genre == "F" & alcool >= 12 & alcool <= 28 ~ "Oui",
-      TRUE ~ "Non"
-    ),
-    Consommation_risque = case_when(
-      genre == "H"  & alcool > 56 ~ "Oui",
-      genre == "F"  & alcool > 28 ~ "Oui" ,
-      TRUE ~ "Non" ),
-    Consommation_alcool = case_when(alcool >= 1 ~ "Oui",
-      TRUE ~ "Non")
-  ) -> biometry
-
-FF<- biometry %>.% 
- sgroup_by(., genre) %>.%
-  ssummarise(.,
-    "Conso_occasionnelle" = fn(Consommation_occasionnelle),
-    "Conso_modérée" = fn(Consommation_modérée == "Oui"),
-    "Conso_risque" = fn(Consommation_risque == "Oui"),
-    "Conso_alcool" = fn(Consommation_alcool == "Oui"),
-    "N" = fn(genre)
-    )
-tabularise(FF)
-
-#biometry2 <- biometry %>% #
- # sfilter(age >= 18 & age <= 26) %>% 
- # sselect(genre, masse, age, Consommation_modérée, Consommation_occasionnelle, Consomation_alcool )  %>% 
-#arrange(genre, age)
-#tabularise(biometry2)
+    Consommation_alcool = case_when(alcool > 1 ~ "Consommation_alcool",
+      TRUE ~ "Pas de consommation_alcool"))
+tab1 <- ggpubr::ggtexttable(table(biometry$alimentation, biometry$genre))
+tab1c <- ggpubr::ggtexttable(table(biometry$Consommation_alcool, biometry$genre))
+combine_charts(list(tab1, tab1c), nrow = 2)
 ```
 
 ### Description par l'étudiant 4
