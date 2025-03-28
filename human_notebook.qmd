@@ -614,6 +614,7 @@ anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
 
 ```{r cond2_test_anova1_1}
 chart$qqplot(anova_masse)
+
 ```
 
 <!--% Interprétation statistique et biologique -->
