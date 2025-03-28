@@ -584,6 +584,17 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 ```{r plot_anova1_1}
 
+biometry %>.%
+  smutate(., chat = labelise(
+    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
+biometry
+
+chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
+  geom_violin() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("IMG")
+
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -591,6 +602,8 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_1}
+bartlett.test(data = biometry, Indice_de_masse_grasse ~ group)
+
 
 ```
 
