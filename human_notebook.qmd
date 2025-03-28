@@ -574,7 +574,7 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
--   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l\'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
+-   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
 
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
@@ -584,17 +584,6 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 ```{r plot_anova1_1}
 
-biometry %>.%
-  smutate(., chat = labelise(
-    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
-biometry
-
-chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
-  geom_violin() +
-  geom_jitter(width = 0.05, alpha = 0.5) +
-  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
-  ylab("IMG")
-
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -602,8 +591,6 @@ chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_1}
-bartlett.test(data = biometry, Indice_de_masse_grasse ~ group)
-
 
 ```
 
@@ -615,6 +602,16 @@ bartlett.test(data = biometry, Indice_de_masse_grasse ~ group)
 
 ```{r plot_anova1_2}
 
+biometry %>.%
+  smutate(., chat = labelise(
+    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
+biometry
+
+chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
+  geom_violin() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("IMG")
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -622,7 +619,13 @@ bartlett.test(data = biometry, Indice_de_masse_grasse ~ group)
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_2}
+bartlett.test(data = biometry, Indice_de_masse_grasse ~ chat)
 
+chat_anova <- lm (data = biometry, Indice_de_masse_grasse ~ chat )
+anova(chat_anova)|> tabularise()
+
+  
+chart$qqplot(chat_anova, lang = "fr")
 ```
 
 <!--% Interprétation statistique et biologique -->
