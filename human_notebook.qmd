@@ -53,8 +53,7 @@ biometry <- read("data/biometry.rds")
 
 chart(biometry, masse_corr ~ taille %col=% genre)+
   geom_point()+
-  xlab("Taille(cm)") +
-  ylab("Masse(kg)")
+  labs(title = "Représentation de la masse des individus analysés en fonction de leur taille", y= "Masse(kg)" , x= "Taille(cm)" )
 ```
 
 Analyse:
@@ -239,9 +238,13 @@ biometry <- biometry %>.%
   smutate(.,dette_sommeil = sommeil_optimal - sommeil)
 ```
 
-<!--% Graphique ou tableau utilisant l'indice calculé.-->
+La formule de la dette de sommeil est:
 
-Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
+$\text{dette de sommeil} = \text{sommeil optimal} - \text{sommeil réel}$
+
+Les données ont été trouvées sur le site: https://www.sommeil.org/comprendre-le-sommeil/combien-de-temps-et-d-heures-doit-on-dormir-pour-etre-en-bonne-sante-et-en-forme/
+
+<!--% Graphique ou tableau utilisant l'indice calculé.-->
 
 ```{r plot_indice1}
 # Graphique ou tableau utilisant l'indice calculé.
@@ -425,6 +428,8 @@ H1 : IMC homme **≠** IMC femme
 
 ```{r test_chi2_1}
 
+tabularise(imc_tabcontingence)#pour vérifier le nombre d'individus par catégorie
+
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -517,6 +522,8 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 ```
 
 <!-- Interprétation statistique et biologique -->
+
+Nous observons que la taille des hommes diffère de manière significative au seuil alpha de 5% ( test t bilatéral, t = 12.366, ddl = 138, valeur p = 2.2e-16)
 
 ### Test t de Student 2
 
