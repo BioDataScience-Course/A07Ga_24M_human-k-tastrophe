@@ -454,7 +454,6 @@ chisq.test(RTH_tabchi2)
 
 ```{r test_chi2_2}
 #Vérification des variables (il nous faut des qualitatives)
-skimr::skim(RTH_tabchi2)
 #Vérification du nombre total d'individus et l'indépendance des variables
 tabularise(RTH_tabchi2)
 ```
