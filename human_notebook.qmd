@@ -98,7 +98,7 @@ biometry %>.%
     "moyenne de la masse (kg)" = fmean(masse_corr),
     "moyenne de la taille (cm)" = fmean(taille),
     "moyenne d'activités physiques (min)" = fmean(activite_physique),
-    "moyenne de l'IMC" = fmean(IMC),
+    "moyenne de l'IMC" = fmean(masse / (taille / 100)^2),
     "n" = fn(masse_corr)) ->
   Moyenne_tab
 tabularise(Moyenne_tab, auto.labs = FALSE)
@@ -444,7 +444,7 @@ Biologique : Nous n'observons pas de manière significative qu'il y a une relati
 
 ```{r plot_chi2_2}
 RTH_tabchi2 <- table(RTH_Categorie$sucre, RTH_Categorie$RTH)
-tabularise(RTH_tabchi2)
+chisq.test(RTH_tabchi2)
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -458,7 +458,9 @@ tabularise(RTH_tabchi2)
 <!--% Vérification des conditions d'application -->
 
 ```{r test_chi2_2}
-chisq.test(RTH_tabchi2)
+#Vérification des variables (il nous faut des qualitatives)
+#Vérification du nombre total d'individus et l'indépendance des variables
+tabularise(RTH_tabchi2)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -578,6 +580,8 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
+-   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
+
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
 ### ANOVA à un facteur 1
@@ -586,6 +590,17 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 ```{r plot_anova1_1}
 
+biometry %>.%
+  smutate(., chat = labelise(
+    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
+biometry
+
+chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
+  geom_violin() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("IMG")
+
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -593,6 +608,8 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_1}
+bartlett.test(data = biometry, Indice_de_masse_grasse ~ group)
+
 
 ```
 
