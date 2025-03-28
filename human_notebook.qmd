@@ -574,7 +574,7 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
--   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l\'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
+-   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
 
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
