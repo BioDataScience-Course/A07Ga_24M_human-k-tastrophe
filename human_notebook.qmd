@@ -16,7 +16,7 @@ bibliography: bibliography/references.bib
 
 ```{r setup, include=FALSE}
 # Ceci est nécessaire pour les tests SDD, ne pas utiliser dans un "vrai" projet
-if (!"tools:tests" %in% search())
+if (!"tools:tests" %in% search())data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAaCAYAAADFTB7LAAAAcElEQVR4Xu3OwQmAQAxE0bClWYCW5N06tM6V2YPg5CjoF/JhLoHAi6iqn9eOefUbqrYvHY0cQDLyAlKRNyARmYA0ZMLRkAlGQyaU72tkAtlim7r/vJqDUDjlKBROOQyFU2icQuMUGqfQuBEaV1XPOwEx96nYACK8+wAAAABJRU5ErkJggg==
   source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
 
 # Configuration de l'environnement SciViews::R
@@ -54,7 +54,8 @@ biometry <- read("data/biometry.rds")
 chart(biometry, masse_corr ~ taille %col=% genre)+
   geom_point()+
   xlab("Taille(cm)") +
-  ylab("Masse(kg)")
+  ylab("Masse(kg)")+
+  labs(title = "Relation entre la taille et la masse par genre")
 ```
 
 Analyse:
@@ -64,7 +65,7 @@ Analyse:
 -   Les individus ayant les masses les plus faibles sont des femmes, tandis que ceux ayant les masses les plus importantes sont des hommes.
 
 ```{r MartinJadouille}
-M1<- biometry %>.%
+biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
     "moyenne du tour de poignet" = fmean(tour_poignet),
@@ -244,9 +245,7 @@ Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
 
 ```{r plot_indice1}
 # Graphique ou tableau utilisant l'indice calculé.
-biometry <- biometry %>.%
-  smutate(.,IMC = masse_corr / (taille/100)^2)
-
+smutate(.,IMC = masse_corr / (taille/100)^2)%>.%
 chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% alimentation)+
   geom_point()
 ```
@@ -409,8 +408,6 @@ labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_1}
-imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
-
 chisq.test(imc_tabcontingence)
 ```
 
@@ -423,7 +420,8 @@ H1 : IMC homme **≠** IMC femme
 <!--% Vérification des conditions d'application -->
 
 ```{r test_chi2_1}
-
+imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
+tabularise(imc_tabcontingence)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -570,9 +568,7 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
-
 -   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
-
 
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
@@ -609,7 +605,6 @@ $H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{poids}_i} \neq \mu
 
 <!--% Vérification des conditions d'application -->
 
-
 ```{r cond1_test_anova1_1}
 bartlett.test(data = biometry1, masse ~ age_rec)
 ```
@@ -622,7 +617,6 @@ anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
 ```{r cond2_test_anova1_1}
 chart$qqplot(anova_masse)
 ```
-
 
 ```{r Test_post_hoc}
 summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
