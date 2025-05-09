@@ -614,7 +614,13 @@ anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
 
 ```{r cond2_test_anova1_1}
 chart$qqplot(anova_masse)
+```
 
+```{r Test_post_hoc}
+summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
+  linfct = multcomp::mcp(group = "Tukey"))))
+oma <- par(oma)
+plot(masse_posthoc)
 ```
 
 <!--% Interprétation statistique et biologique -->
