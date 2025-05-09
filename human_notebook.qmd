@@ -570,6 +570,10 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
+
+-   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
+
+
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
 ### ANOVA à un facteur 1
@@ -588,11 +592,13 @@ Masse_tab
 names(Masse_tab)[1] <- "Classe d'âge"
 tabularise(Masse_tab, auto.labs = FALSE)
 
+
 chart(data = biometry_imc, masse ~ age_rec) +
   geom_boxplot() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary( geom = "point", fun = "mean" , color = "red") +  
   labs(title = "Moyennes de poids par tranche d'âge", y = "Masse", x = "Tranche d'âge") 
+
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -602,6 +608,7 @@ $H_0 : \mu_{\text{poids}_1} = \mu_{\text{poids}_2} = \dots = \mu_{\text{poids}_k
 $H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{poids}_i} \neq \mu_{\text{poids}_j}$
 
 <!--% Vérification des conditions d'application -->
+
 
 ```{r cond1_test_anova1_1}
 bartlett.test(data = biometry1, masse ~ age_rec)
@@ -616,11 +623,13 @@ anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
 chart$qqplot(anova_masse)
 ```
 
+
 ```{r Test_post_hoc}
 summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
   linfct = multcomp::mcp(group = "Tukey"))))
 oma <- par(oma)
 plot(masse_posthoc)
+
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -631,6 +640,16 @@ plot(masse_posthoc)
 
 ```{r plot_anova1_2}
 
+biometry %>.%
+  smutate(., chat = labelise(
+    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
+biometry
+
+chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
+  geom_violin() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("IMG")
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -638,7 +657,13 @@ plot(masse_posthoc)
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_2}
+bartlett.test(data = biometry, Indice_de_masse_grasse ~ chat)
 
+chat_anova <- lm (data = biometry, Indice_de_masse_grasse ~ chat )
+anova(chat_anova)|> tabularise()
+
+  
+chart$qqplot(chat_anova, lang = "fr")
 ```
 
 <!--% Interprétation statistique et biologique -->
