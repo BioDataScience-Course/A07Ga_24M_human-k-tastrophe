@@ -20,7 +20,7 @@ if (!"tools:tests" %in% search())
   source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
 
 # Configuration de l'environnement SciViews::R
-SciViews::R("infer", lang = "fr")
+SciViews::R("infer", "model", lang = "fr")
 ```
 
 # Introduction et but
@@ -99,7 +99,7 @@ biometry %>.%
     "moyenne de la masse (kg)" = fmean(masse_corr),
     "moyenne de la taille (cm)" = fmean(taille),
     "moyenne d'activités physiques (min)" = fmean(activite_physique),
-    "moyenne de l'IMC" = fmean(masse / (taille / 100)^2),
+    "moyenne de l'IMC" = fmean(IMC),
     "n" = fn(masse_corr)) ->
   Moyenne_tab
 tabularise(Moyenne_tab, auto.labs = FALSE)
@@ -184,7 +184,6 @@ names(dimnames(tab_sex_age)) <- c("Classe d'âge", "Genre")
 
 # Affichage du tableau
 tabularise(tab_sex_age)
-
 ```
 
 $Interprétation$
@@ -365,7 +364,7 @@ IMC >= 30 ~ "Obésité")) -> biometry_imc
 biometry_imc
 biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 
-tabularise(biometry_imc) 
+tabularise$headtail(biometry_imc) 
 ```
 
 L'IMC est donné par la formule :
@@ -439,7 +438,7 @@ Biologique : Nous n'observons pas de manière significative qu'il y a une relati
 
 ```{r plot_chi2_2}
 RTH_tabchi2 <- table(RTH_Categorie$sucre, RTH_Categorie$RTH)
-chisq.test(RTH_tabchi2)
+tabularise(RTH_tabchi2)
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -453,10 +452,7 @@ chisq.test(RTH_tabchi2)
 <!--% Vérification des conditions d'application -->
 
 ```{r test_chi2_2}
-#Vérification des variables (il nous faut des qualitatives)
-skimr::skim(RTH_tabchi2)
-#Vérification du nombre total d'individus et l'indépendance des variables
-tabularise(RTH_tabchi2)
+chisq.test(RTH_tabchi2)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -484,7 +480,7 @@ $H_1: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} \neq 0$
 
 ```{r test_t_1}
 
-#Pour utiliser un test t de student, il faut que la variance entre les deux groupes considérés soit similaire. Dans le cas contraire, changer "var.equal = TRUE" -> ""var.equal = FALSE"
+#Pour utiliser un test t de student, il faut que la variance entre les deux groupes considérés soit similaire(simple au double). Dans le cas contraire, changer "var.equal = TRUE" -> ""var.equal = FALSE"
 biometry %>.%
   sgroup_by(., genre) %>.% 
   ssummarise(.,
@@ -574,7 +570,9 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
+
 -   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
+
 
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
@@ -583,14 +581,47 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova1_1}
+#NB : obtenir des valeurs suppl sans savoir à quoi cela se rapporte = présence de valeurs manquantes. (→sdrop.na())
+biometry1 %>.%
+sgroup_by(., age_rec) %>.%
+ssummarise(.,
+"Moyenne de la masse (kg)" = fmean(masse),
+"Médiane de la masse" = fsd(masse),
+"n" = fnobs(masse)) ->
+Masse_tab
+names(Masse_tab)[1] <- "Classe d'âge"
+tabularise(Masse_tab, auto.labs = FALSE)
+
+
+chart(data = biometry_imc, masse ~ age_rec) +
+  geom_boxplot() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary( geom = "point", fun = "mean" , color = "red") +  
+  labs(title = "Moyennes de poids par tranche d'âge", y = "Masse", x = "Tranche d'âge") 
 
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+$H_0 : \mu_{\text{poids}_1} = \mu_{\text{poids}_2} = \dots = \mu_{\text{poids}_k}$
+
+$H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{poids}_i} \neq \mu_{\text{poids}_j}$
+
 <!--% Vérification des conditions d'application -->
 
+
+```{r cond1_test_anova1_1}
+bartlett.test(data = biometry1, masse ~ age_rec)
+```
+
 ```{r test_anova1_1}
+anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
+
+```
+
+```{r cond2_test_anova1_1}
+chart$qqplot(anova_masse)
+
 
 ```
 
