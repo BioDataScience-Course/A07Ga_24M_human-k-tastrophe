@@ -414,6 +414,7 @@ labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_1}
+imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
 chisq.test(imc_tabcontingence)
 ```
 
@@ -426,7 +427,6 @@ H1 : IMC homme **≠** IMC femme
 <!--% Vérification des conditions d'application -->
 
 ```{r test_chi2_1}
-imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
 tabularise(imc_tabcontingence)
 ```
 
@@ -631,6 +631,8 @@ plot(masse_posthoc)
 
 <!--% Interprétation statistique et biologique -->
 
+Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence significative entre au moins 2 groupes au seuil alpha de 5% (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+
 ### ANOVA à un facteur 2
 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
@@ -672,21 +674,26 @@ chart$qqplot(chat_anova, lang = "fr")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova2_1}
-anova22<-anova(lm(data=biometry,BMI~genre*activité)%>.% 
+anova(bio_anova<-lm(data = biometry, IMC ~ genre * alimentation))%>.%
     tabularise(.)
+
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+H₀ : Il n\'y a pas d\'interaction entre le genre et l\'alimentation sur l\'IMC.
+
+H₁ : Il y a une interaction significative entre l'alimentation et le genre sur l'IMC.
+
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova2_1}
-chart$qqplot(anova22)
+chart$qqplot(bio_anova)
 
-bartlett.test(data=anova22,BMI ~ interaction(genre, activité))
+bartlett.test(data = biometry, IMC ~interaction(genre, alimentation))
 
-sselect(biometry,BMI,genre,activité)%>.%
-  tabularise(.)
+sselect(biometry,genre,sucre)%>.%
+  table(biometry$genre, biometry$alimentation)
 ```
 
 <!--% Interprétation statistique et biologique -->
