@@ -241,6 +241,10 @@ biometry <- biometry %>.%
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
+La formule pour calculée cet indice est:
+
+$\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
+
 Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
 
 ```{r plot_indice1}
@@ -666,7 +670,8 @@ chart$qqplot(chat_anova, lang = "fr")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova2_1}
-
+anova22<-anova(lm(data=biometry,BMI~genre*activité)%>.% 
+    tabularise(.)
 ```
 
 <!--% Hypothèse nulle et alternative -->
@@ -674,7 +679,12 @@ chart$qqplot(chat_anova, lang = "fr")
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova2_1}
+chart$qqplot(anova22)
 
+bartlett.test(data=anova22,BMI ~ interaction(genre, activité))
+
+sselect(biometry,BMI,genre,activité)%>.%
+  tabularise(.)
 ```
 
 <!--% Interprétation statistique et biologique -->
