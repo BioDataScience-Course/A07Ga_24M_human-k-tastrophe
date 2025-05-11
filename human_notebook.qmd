@@ -570,9 +570,7 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 
 <!--% Interprétation statistique et biologique -->
 
-
 -   Nous rejetons H0 au seuil alpha de 5%, il y a donc une différence significative entre les variables de l'IMG des femmes et des hommes (Student t test, t = -7.7594, ddl = 141, p-value = 1.566e-12).
-
 
 <!--# Travaillez jusqu'ici pour le module 8. Commencez à travailler sur le rapport (intro, mat&met). -->
 
@@ -609,7 +607,6 @@ $H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{poids}_i} \neq \mu
 
 <!--% Vérification des conditions d'application -->
 
-
 ```{r cond1_test_anova1_1}
 bartlett.test(data = biometry1, masse ~ age_rec)
 ```
@@ -622,7 +619,6 @@ anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
 ```{r cond2_test_anova1_1}
 chart$qqplot(anova_masse)
 ```
-
 
 ```{r Test_post_hoc}
 summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
