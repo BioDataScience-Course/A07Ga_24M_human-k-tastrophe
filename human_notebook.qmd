@@ -54,7 +54,8 @@ biometry <- read("data/biometry.rds")
 chart(biometry, masse_corr ~ taille %col=% genre)+
   geom_point()+
   xlab("Taille(cm)") +
-  ylab("Masse(kg)")
+  ylab("Masse(kg)")+
+  labs(title = "Relation entre la taille et la masse par genre")
 ```
 
 Analyse:
@@ -64,15 +65,15 @@ Analyse:
 -   Les individus ayant les masses les plus faibles sont des femmes, tandis que ceux ayant les masses les plus importantes sont des hommes.
 
 ```{r MartinJadouille}
-M1<- biometry %>.%
+biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
     "moyenne du tour de poignet" = fmean(tour_poignet),
     "moyenne de la taille" = fmean(tour_taille),
     "moyenne du tour de hanche" = fmean(tour_hanche),
     "moyenne de la masse" = fmean(masse_corr),
-    "n" = fn(genre))
-tabularise(M1)
+    "n" = fn(genre))%>.%
+tabularise(.)
 ```
 
 -   On remarque que les hommes ont une moyenne de tour de poignet, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
@@ -240,14 +241,18 @@ biometry <- biometry %>.%
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
+La formule pour calculée cet indice est:
+
+$\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
+
 Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
 
 ```{r plot_indice1}
 # Graphique ou tableau utilisant l'indice calculé.
 biometry <- biometry %>.%
-  smutate(.,IMC = masse_corr / (taille/100)^2)
-
-chart(data= biometry, dette_sommeil ~ IMC %shape=% group_age %col=% alimentation)+
+  smutate(.,IMC = masse_corr / (taille / 100)^2)
+  
+  chart(biometry,dette_sommeil ~ IMC %shape=% group_age %col=% alimentation) +
   geom_point()
 ```
 
@@ -410,7 +415,6 @@ labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", 
 
 ```{r plot_chi2_1}
 imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
-
 chisq.test(imc_tabcontingence)
 ```
 
@@ -423,7 +427,7 @@ H1 : IMC homme **≠** IMC femme
 <!--% Vérification des conditions d'application -->
 
 ```{r test_chi2_1}
-
+tabularise(imc_tabcontingence)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -436,7 +440,7 @@ Biologique : Nous n'observons pas de manière significative qu'il y a une relati
 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
-```{r plot_chi2_2}
+```{r plot_chi2_2 LouiseDubrecq}
 RTH_tabchi2 <- table(RTH_Categorie$sucre, RTH_Categorie$RTH)
 tabularise(RTH_tabchi2)
 ```
@@ -444,14 +448,11 @@ tabularise(RTH_tabchi2)
 <!--% Hypothèse nulle et alternative -->
 
 -   **H₀** : Il n'y a **pas de relation** entre le RTH et la consommation de sucre.
-
-<!-- -->
-
 -   **H₁** : Il existe **une association** entre le RTH et la consommation de sucre.
 
 <!--% Vérification des conditions d'application -->
 
-```{r test_chi2_2}
+```{r test_chi2_2 LouiseDubrecq}
 chisq.test(RTH_tabchi2)
 ```
 
@@ -630,6 +631,8 @@ plot(masse_posthoc)
 
 <!--% Interprétation statistique et biologique -->
 
+Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence significative entre au moins 2 groupes au seuil alpha de 5% (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+
 ### ANOVA à un facteur 2
 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
@@ -671,15 +674,26 @@ chart$qqplot(chat_anova, lang = "fr")
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova2_1}
+anova(bio_anova<-lm(data = biometry, IMC ~ genre * alimentation))%>.%
+    tabularise(.)
 
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+H₀ : Il n\'y a pas d\'interaction entre le genre et l\'alimentation sur l\'IMC.
+
+H₁ : Il y a une interaction significative entre l'alimentation et le genre sur l'IMC.
+
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova2_1}
+chart$qqplot(bio_anova)
 
+bartlett.test(data = biometry, IMC ~interaction(genre, alimentation))
+
+sselect(biometry,genre,sucre)%>.%
+  table(biometry$genre, biometry$alimentation)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -688,19 +702,42 @@ chart$qqplot(chat_anova, lang = "fr")
 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
-```{r plot_anova2_2}
-
+```{r plot_anova2_2 LouiseDubrecq}
+anova(RTH_anova2 <- lm(data = RTH_Categorie, masse ~ RTH * sucre)) %>.%
+tabularise(.)
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+-   H0 : L'IMC n'est pas significativement différent en fonction du rapport taille-hanche (RTH) et/ou en fonction de la consommation de sucre
+
+-   H1 : L'IMC est significativement différent en fonction du rapport taille-hanche (RTH) et/ou en fonction de la consommation de sucre
+
 <!--% Vérification des conditions d'application -->
 
-```{r test_anova2_2}
+```{r test_anova2_2 LouiseDubrecq}
+#Vérification des variables et données
+RTH_Categorie_2 <- sselect(RTH_Categorie, masse, genre, RTH)
+tabularise$headtail(RTH_Categorie_2)
+
+RTH_Categorie %>.%
+sgroup_by(., RTH, sucre) %>.%
+ssummarise(.,
+mean = fmean(masse),
+var = fvar(masse),
+count = fnobs(masse))
+
+#Analyse de la distribution des résidus :
+chart$qqplot(RTH_anova2)
+
+#Vérification d'homoscédasticité
+bartlett.test(data = RTH_Categorie, masse ~ interaction(RTH, sucre))
 
 ```
 
 <!--% Interprétation statistique et biologique -->
+
+(pense à faire un test post hoc)
 
 # Discussion et conclusions
 
