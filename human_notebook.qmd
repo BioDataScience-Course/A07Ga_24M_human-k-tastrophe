@@ -80,9 +80,8 @@ $Interprétation$
 
 -   On remarque que les hommes ont une moyenne de tour de poignet, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
 
-```{=html}
 <!-- -->
-```
+
 -   Deux genres ont été échantillonnés : les femmes et les hommes, pour un total de 144 personnes. Les deux genres ne sont pas équilibrés, il y a 14 femmes de plus que d'hommes
 
 ### Description par l'étudiant 2
@@ -118,52 +117,33 @@ tabularise(Moyenne_tab, auto.labs = FALSE)
 
 ### Description par l'étudiant 3
 
-```{r}
+```{r description1_Pierre_Martin}
 chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
   xlab("Genre") +
-  ylab("Taille en m") +
+  ylab("Taille en mètre") +
   geom_boxplot()
 
 
-#(chart(data = biometry, ~ factor(0) %fill=% age ) +
- # geom_bar(width = 1) + 
-  #coord_polar("y", start = 0) +
-  #theme_void() +
-  #scale_fill_viridis_d()chart(data = biometry, masse_corr ~ genre %col=% genre %fill=% sucre)+
- # geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))+
-  #xlab("Genre")+
-  #ylab("Masse en kg")
-
-  
 ```
 
-```{r}
+-   Dans la sous population des femmes omnivores nous observons 3 valeurs extrêmes.
+
+-   Une différence de taille est observée entre les hommes et les femmes peu importe le régime alimentaire.
+
+-   Les individus les plus grands et les plus petits sont omnivores peu importe leur genre.
+
+```{r description2_Pierre_Martin}
 library(ggpubr)
-#biometry <- biometry %>%
-  #smutate(
-  #  Non_consommation_alcool = case_when(alcool < 1 ~ "Oui",
-  #    TRUE ~ "Non"),
-  #  Consommation_occasionnelle = case_when(
-  #    alcool <= 12 ~ "Oui",
-  #    TRUE ~ "Non"
-  #  ),
-  #  Consommation_modérée = case_when(
-  #    genre == "H" & alcool >= 12 & alcool <= 56 ~ "Oui",
-  #    genre == "F" & alcool >= 12 & alcool <= 28 ~ "Oui",
-  #    TRUE ~ "Non"
-  #  ),
-  #  Consommation_risque = case_when(
-  #    genre == "H"  & alcool > 56 ~ "Oui",
-  #    genre == "F"  & alcool > 28 ~ "Oui" ,
- #     TRUE ~ "Non" )
-#  ) -> biometry
 
 biometry <- biometry %>%
   smutate(
     Consommation_alcool = case_when(alcool > 1 ~ "Consommation_alcool",
       TRUE ~ "Pas de consommation_alcool"))
+
 tab1 <- ggpubr::ggtexttable(table(biometry$alimentation, biometry$genre))
+
 tab1c <- ggpubr::ggtexttable(table(biometry$Consommation_alcool, biometry$genre))
+
 combine_charts(list(tab1, tab1c), nrow = 2)
 ```
 
@@ -329,7 +309,7 @@ combine_charts(list(a, b))
 
 <!--% Description et formule ci-dessous. -->
 
-```{r indice3}
+```{r indice3 Pierre Martin}
 
 # Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
 
@@ -339,13 +319,18 @@ biometry <- biometry %>.%
   smutate(., 
     genre_img = ifelse(genre == "H", 1, 0),
     Indice_de_masse_grasse = ((1.2 * IMC) + (0.23 * age) - (10.8 * genre_img) - 5.4))
- 
+
+tabularise$headtail(biometry) 
 
 ```
 
+L'IMG a comme formule :
+
+Pour les femmes \$\text{IMG} = (1.20 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4 \$ Pour les hommes \$ \text{IMG} = (1.20 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2 \$ Formule utilisée fusionnant les 2 formules \$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4 \$ Avec comme valeur 1 si genre = homme et 0 si genre = femme
+
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
-```{r plot_indice3}
+```{r plot_indice3 Pierre Martin}
 # Graphique ou tableau utilisant l'indice calculé.
 chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| alimentation)+
   geom_boxplot()
@@ -353,11 +338,13 @@ chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| aliment
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   ...
+-   Les femmes on en moyenne un IMG plus élevé que les hommes peu importe le régime alimentaire. (pas d'homme pour régime végétarien donc comparaison non possible)
 
--   ...
+-   Deux valeurs extrêmes sont observées pour les hommes entre 18 et 25 ans ayant un régime omnivore.
 
--   ...
+-   On observe que peu importe le régime alimentaire et le genre, quand l'âge augmente l'indice de masse grasse augmente lui aussi.
+
+-   Chez les omnivores la distributions des individus est plus grande chez les femmes dans un même groupe d'âge.
 
 ### Indice 4
 
@@ -465,7 +452,9 @@ chisq.test(RTH_tabchi2)
 
 <!--% Interprétation statistique et biologique -->
 
--   
+-   Comme la p-value est supérieure au seuil de 5%, 0.2832 \> 0.05, nous ne pouvons pas rejetter H0 ( X-squared = 7.4271, df = 6, p-value = 0.2832). Nous nepouvons pas infirmer qu'il n'y a pas de relation entre le RTH et la consommation de sucre.
+
+Ce résultat obtenu peut être causé par un trop faible effectif d'individus statistique.
 
 <!--# Travaillez jusqu'ici pour le module 7. -->
 
@@ -552,8 +541,8 @@ biometry %>.%
     `écart type IMG` = fsd(Indice_de_masse_grasse),
     `variance IMG` = fsd(Indice_de_masse_grasse)^2,
     `n`                 = fn(Indice_de_masse_grasse)) ->
-  HG
-tabularise(HG)
+  biometry_IMG
+tabularise(biometry_IMG)
 
 #Le test de t student suppose que la distribution est normale. On peut vérifier cette distribution grâce à un graphique quantile-quantile
 # Rappel : distribution de la population…
@@ -646,30 +635,49 @@ Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une di
 
 ```{r plot_anova1_2}
 
-biometry %>.%
-  smutate(., chat = labelise(
-    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
-biometry
+sgroup_by(., genre) %>.% 
+  ssummarise(.,
+    `moyenne IMG`    = fmean(Indice_de_masse_grasse),
+ `médiane IMG`    = fmedian(Indice_de_masse_grasse),
+  `écart type IMG` = fsd(Indice_de_masse_grasse),
+ `variance IMG` = fsd(Indice_de_masse_grasse)^2,
+ `n`                 = fn(Indice_de_masse_grasse)) ->
+  biometry_IMG
+tabularise(biometry_IMG)
 
-chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
+chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
+  geom_boxplot() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("Indice de masse grasse")
+
+chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
   geom_violin() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
-  ylab("IMG")
+  ylab("Indice de masse grasse")
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+$H_0 : \mu_{\text{IMG}_1} = \mu_{\text{IMG}_2} = \dots = \mu_{\text{IMG}_k}$
+
+$H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{IMG}_i} \neq \mu_{\text{IMG}_j}$
+
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_2}
-bartlett.test(data = biometry, Indice_de_masse_grasse ~ chat)
+bartlett.test(data = biometry, Indice_de_masse_grasse ~ genre)
 
-chat_anova <- lm (data = biometry, Indice_de_masse_grasse ~ chat )
-anova(chat_anova)|> tabularise()
+IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
+anova(IMG_anova)|> tabularise()
 
   
-chart$qqplot(chat_anova, lang = "fr")
+chart$qqplot(IMG_anova, lang = "fr")
+
+summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(genre = "Tukey"))))
+
+plot(IMG_posthoc)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -754,9 +762,8 @@ bartlett.test(data = RTH_Categorie, masse ~ interaction(RTH, sucre))
 
     Nous pouvons donc retirer le test Chi2 1 car il nous montre également qu'il n'y a pas de lien entre l'IMC et le genre tout comme l'ANOVA à deux facteur 1 qui lui est plus puissant et qui montre une intéraction supplémentaire.
 
-```{=html}
 <!-- -->
-```
+
 -   ...
 
 -   ...
