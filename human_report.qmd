@@ -1,6 +1,6 @@
 ---
-title: "___"
-author: "___, ___, ___, ___"
+title: "Lien entre la santé et données anthropométriques dans un échantillon"
+author: "MartinJadouille, LouiseDubrecq, PierreMartin, SarahDelapierre"
 date: "`r Sys.Date()`"
 format:
   html:
@@ -22,7 +22,7 @@ if (!"tools:tests" %in% search())
   source(here::here("tests/tools_tests.R"), attach(NULL, name = "tools:tests"))
 
 # Configuration de l'environnement SciViews::R
-SciViews::R(___, lang = "fr")
+SciViews::R("infer", "model", lang = "fr")
 ```
 
 # Introduction
@@ -31,13 +31,13 @@ SciViews::R(___, lang = "fr")
 
 <!--# Ce projet porte sur la santé humaine liée à l'obésité, à la façon de se nourrir et aux activités réalisées (plus ou moins sédentaire ou actif) ... Réalisez des recherches bibliographiques afin d'avoir une vision précise de la thématique. Existe-t-il des indicateurs calculables pour quantifier l'état de santé d'un individu, par exemple ? Naturellement, ces indicateurs doivent être calculables sur bases des variables mesurées dans votre jeu de données. Focalisez-vous donc sur ces variables-là. -->
 
-...Votre introduction ici...
+En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculable. Ces données ne correspondent pas toujours aux valeurs définis par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique.
 
-# But
+Notre travail vise à comparer les résultats obtenus par @lebacq2015 avec un échantillon de la population belge. À l'aide de tests statistiques et de graphiques, nous analyserons les différences et similitudes dans les tendances observées. Cette étude permettra d'évaluer l'état de santé de la population et d'identifier les mesures de prévention nécessaires pour améliorer le bien-être des citoyens belges.But
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
-...Votre but ici...
+Comment les données anthropométrique de notre échantillon de la population belge et celle obtenus par \@lebacq2015 reflètent elle l'état de santé de la population?
 
 # Matériel et méthodes
 
