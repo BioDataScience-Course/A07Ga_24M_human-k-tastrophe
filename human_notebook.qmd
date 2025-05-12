@@ -370,21 +370,21 @@ biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 tabularise$headtail(biometry_imc) 
 ```
 
-L\'indice de masse corporelle (IMC) est calculé par la formule suivante :
+L'indice de masse corporelle (IMC) est calculé par la formule suivante :
 
 $IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
 
 L'IMC est une norme internationale de référence permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés. Chez les adultes, des seuils internationalement reconnus permettent de classer les individus selon leur statut pondéral :
 
--    IMC \< 18,5 : insuffisance pondérale
+-   IMC \< 18,5 : insuffisance pondérale
 
--    18,5 ≤ IMC \< 25 : poids normal
+-   18,5 ≤ IMC \< 25 : poids normal
 
--    25 ≤ IMC \< 30 : surpoids
+-   25 ≤ IMC \< 30 : surpoids
 
--    IMC ≥ 30 : obésité
+-   IMC ≥ 30 : obésité
 
-Chez les enfants et adolescents, des seuils spécifiques à l\'âge et au sexe, définis par l\'International Obesity Task Force (IOTF), sont utilisés pour assurer la comparabilité internationale.
+Chez les enfants et adolescents, des seuils spécifiques à l'âge et au sexe, définis par l'International Obesity Task Force (IOTF), sont utilisés pour assurer la comparabilité internationale.
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
@@ -409,7 +409,7 @@ labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", 
 
 -   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et sont, pour la plupart de corpulence normale ou en surchage pondérale.
 
--   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d\'âge, pourrait indiquer une tendance à la prise de poids avec l\'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d\'hommes. Toutefois, ces individus ne constituent que 16,2 % de l\'échantillon, ce qui limite la portée des conclusions possibles.
+-   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d'âge, pourrait indiquer une tendance à la prise de poids avec l'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d'hommes. Toutefois, ces individus ne constituent que 16,2 % de l'échantillon, ce qui limite la portée des conclusions possibles.
 
 ## Tests d'hypothèses
 
@@ -430,7 +430,7 @@ chisq.test(imc_tabcontingence)
 
 $H_0 : IMC_{\text{hommes}} = IMC_{\text{femmes}}$
 
-$ H_1 : IMC_{\text{hommes}} \neq IMC_{\text{femmes}} $ 
+\$ H_1 : IMC\_{\text{hommes}} \neq IMC\_{\text{femmes}} \$
 
 <!--% Vérification des conditions d'application -->
 
@@ -740,12 +740,11 @@ Test sur l'intéraction genre et alimentation : ANOVA à 2 facteurs 1, Ddl = 1, 
 
 **Biologique :**
 
-On ne peut pas montrer de différence significative d\'IMC entre les genres.
+On ne peut pas montrer de différence significative d'IMC entre les genres.
 
-On ne peut pas montrer de différence significative d\'IMC entre les types d\'alimentation.
+On ne peut pas montrer de différence significative d'IMC entre les types d'alimentation.
 
-Aucun effet d\'interaction significatif n\'a été observé entre le genre et le type d\'alimentation :
-autrement dit, l'effet de l\'alimentation sur l\'IMC ne semble pas dépendre du genre.
+Aucun effet d'interaction significatif n'a été observé entre le genre et le type d'alimentation : autrement dit, l'effet de l'alimentation sur l'IMC ne semble pas dépendre du genre.
 
 **Conditions d'application**
 
