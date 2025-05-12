@@ -57,13 +57,215 @@ Nous avons également du suivre une règle très stricte de l'anonymat des perso
 
 <!--# N'oubliez pas que ce document doit pouvoir compiler indépendamment du reste. Cela implique que vous ajoutiez un chunk d'importation des données et que vous recalculiez tout ce qui doit l'être... Par contre, un simple copier-coller de toute la partie résultats du bloc-notes ne sera pas considéré comme un travail réalisé : vous devez sélectionner, et éventuellement remanier un peu le code, pour ne conserver que ce qui est utile ici. -->
 
-...Vos descriptions des données ici...
+```{r importation}
+biometry <- read("data/biometry.rds")
+```
+
+### Description par l'étudiant 1
+
+```{r description1_Martin_Jadouille}
+
+
+```
+
+$Interprétation$
+
+
+```{r description2_Martin_Jadouille}
+
+```
+
+$Interprétation$
+
+
+### Description par l'étudiant 2
+
+```{r description1_Louise_Dubrecq}
+
+```
+
+$Interprétation$
+
+
+```{r description2_Louise_Dubrecq}
+
+```
+
+$Interprétation$
+
+
+### Description par l'étudiant 3
+
+```{r description1_Pierre_Martin}
+
+```
+
+$Interprétation$
+
+
+```{r description2_Pierre_Martin}
+
+```
+
+$Interprétation$
+
+
+### Description par l'étudiant 4
+
+```{r description1_Sarah_Delapierre}
+# Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
+biometry$age_rec <- cut(biometry$age,
+  include.lowest = TRUE,
+  right = FALSE,
+  dig.lab = 4,
+  breaks = c(18, 35, 50, 80.2026),
+  labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
+
+# Tableau de contingence
+tab_sex_age <- table(biometry$age_rec, biometry$genre)
+
+# Noms des variables et de leurs niveaux.
+#NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
+
+dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
+names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
+
+
+# Affichage du tableau
+tabularise(tab_sex_age)
+```
+
+$Interprétation$
+
+Dans la population considérée :
+
+Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
+
+Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
+
+Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+
+Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
+
+```{r description2_Sarah_Delapierre}
+biometry1 <- biometry %>%
+  drop_na() %>%
+  filter(alcool <= 20)  # on garde seulement les valeurs jusqu'à 20 verres/sem
+
+chart(data = biometry1, ~ alcool %fill=% genre | age_rec) + 
+  geom_boxplot() + 
+  labs(title = "Consommation d'alcool en fonction de l'âge et du sexe", y = "Effectifs", x = "Consommation d'alcool [verres/sem]", fill = "Genre")
+
+```
+
+$Interprétation$
+
+On observe que les femmes boivent assez peu, hors valeurs extrêmes.
+
+Chez les hommes, la consommation est plus variable et augmente légèrement chez les seniors.
 
 ## Tests d'hypothèses
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-...Vos tests d'hypothèses ici...
+
+
+### Indice 1
+
+
+```{r indice1_Martin_Jadouille}
+
+```
+
+La formule pour calculer cet indice est:
+
+```{r plot_indice1_Martin_Jadouille}
+
+```
+
+$Interprétation$
+
+
+### Indice 2
+
+```{r indice1_Louise_Dubrecq}
+
+```
+
+La formule pour calculer cet indice est:
+
+```{r plot_indice1_Louise_Dubrecq}
+
+```
+
+$Interprétation$
+
+
+### Indice 3
+
+```{r indice1__Pierre_Martin}
+
+```
+
+La formule pour calculer cet indice est:
+
+```{r plot_indice1__Pierre_Martin}
+
+```
+
+### Indice 4
+
+```{r indice4__Sarah_Delapierre}
+#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry1 %>.%
+sselect(., masse, taille, genre, age_rec, age) %>.%
+smutate(.,IMC = masse / (taille / 100)^2,
+IMC = case_when(
+IMC < 18.5 ~ "Carence pondérale",
+IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
+IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
+IMC >= 30 ~ "Obésité")) -> biometry_imc
+biometry_imc
+biometry_imc$IMC <- as.factor(biometry_imc$IMC)
+
+tabularise$headtail(biometry_imc) 
+```
+
+La formule pour calculer cet indice est:
+
+$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
+
+L'IMC est une norme internationale de référence permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés. Chez les adultes, des seuils internationalement reconnus permettent de classer les individus selon leur statut pondéral :
+
+-   IMC \< 18,5 : insuffisance pondérale
+
+-   18,5 ≤ IMC \< 25 : poids normal
+
+-   25 ≤ IMC \< 30 : surpoids
+
+-   IMC ≥ 30 : obésité
+
+Chez les enfants et adolescents, des seuils spécifiques à l'âge et au sexe, définis par l'International Obesity Task Force (IOTF), sont utilisés pour assurer la comparabilité internationale.
+
+```{r plot_indice4_sarah_delapierre}
+#1
+chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
+geom_bar() +
+coord_flip() +
+labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age") + 
+  geom_hline(yintercept = 10, color = "red") + 
+  geom_hline(yintercept = 20, color = "red")
+```
+
+$Interprétation$
+
+-   Il y a plus de femmes en carence pondérale que d'hommes.
+
+-   La majorité de la population est en surcharge pondérale ou de corpulence normale.
+
+-   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et sont, pour la plupart de corpulence normale ou en surchage pondérale.
+
+-   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d'âge, pourrait indiquer une tendance à la prise de poids avec l'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d'hommes. Toutefois, ces individus ne constituent que 16,2 % de l'échantillon, ce qui limite la portée des conclusions possibles.
 
 # Discussion et conclusions
 
