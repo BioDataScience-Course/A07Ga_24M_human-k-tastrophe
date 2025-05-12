@@ -51,8 +51,8 @@ biometry <- read("data/biometry.rds")
 
 ```{r}
 
-chart(biometry, masse_corr ~ taille %col=% genre)+
-  geom_point()+
+chart(biometry, masse_corr ~ taille %col=% genre) +
+  geom_point() +
   xlab("Taille(cm)") +
   ylab("Masse(kg)")+
   labs(title = "Relation entre la taille et la masse par genre")
@@ -117,58 +117,39 @@ tabularise(Moyenne_tab, auto.labs = FALSE)
 
 ### Description par l'étudiant 3
 
-```{r}
+```{r description1_Pierre_Martin}
 chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
   xlab("Genre") +
-  ylab("Taille en m") +
+  ylab("Taille en mètre") +
   geom_boxplot()
 
 
-#(chart(data = biometry, ~ factor(0) %fill=% age ) +
- # geom_bar(width = 1) + 
-  #coord_polar("y", start = 0) +
-  #theme_void() +
-  #scale_fill_viridis_d()chart(data = biometry, masse_corr ~ genre %col=% genre %fill=% sucre)+
- # geom_violin(draw_quantiles = c(0.25, 0.5, 0.75))+
-  #xlab("Genre")+
-  #ylab("Masse en kg")
-
-  
 ```
 
-```{r}
+-   Dans la sous population des femmes omnivores nous observons 3 valeurs extrêmes.
+
+-   Une différence de taille est observée entre les hommes et les femmes peu importe le régime alimentaire.
+
+-   Les individus les plus grands et les plus petits sont omnivores peu importe leur genre.
+
+```{r description2_Pierre_Martin}
 library(ggpubr)
-#biometry <- biometry %>%
-  #smutate(
-  #  Non_consommation_alcool = case_when(alcool < 1 ~ "Oui",
-  #    TRUE ~ "Non"),
-  #  Consommation_occasionnelle = case_when(
-  #    alcool <= 12 ~ "Oui",
-  #    TRUE ~ "Non"
-  #  ),
-  #  Consommation_modérée = case_when(
-  #    genre == "H" & alcool >= 12 & alcool <= 56 ~ "Oui",
-  #    genre == "F" & alcool >= 12 & alcool <= 28 ~ "Oui",
-  #    TRUE ~ "Non"
-  #  ),
-  #  Consommation_risque = case_when(
-  #    genre == "H"  & alcool > 56 ~ "Oui",
-  #    genre == "F"  & alcool > 28 ~ "Oui" ,
- #     TRUE ~ "Non" )
-#  ) -> biometry
 
 biometry <- biometry %>%
   smutate(
     Consommation_alcool = case_when(alcool > 1 ~ "Consommation_alcool",
       TRUE ~ "Pas de consommation_alcool"))
+
 tab1 <- ggpubr::ggtexttable(table(biometry$alimentation, biometry$genre))
+
 tab1c <- ggpubr::ggtexttable(table(biometry$Consommation_alcool, biometry$genre))
+
 combine_charts(list(tab1, tab1c), nrow = 2)
 ```
 
 ### Description par l'étudiant 4
 
-```{r}
+```{r description 4.1}
 # Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
 biometry$age_rec <- cut(biometry$age,
   include.lowest = TRUE,
@@ -184,7 +165,7 @@ tab_sex_age <- table(biometry$age_rec, biometry$genre)
 #NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
 
 dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
-names(dimnames(tab_sex_age)) <- c("Classe d'âge", "Genre")
+names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
 
 
 # Affichage du tableau
@@ -201,18 +182,24 @@ Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à
 
 Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
 
-```{r}
-biometry1 <- drop_na(biometry)
-chart(data = biometry1, ~ alcool %fill=% genre|age_rec) + 
+Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
+
+```{r description 4.2}
+biometry1 <- biometry %>%
+  drop_na() %>%
+  filter(alcool <= 20)  # on garde seulement les valeurs jusqu'à 20 verres/sem
+
+chart(data = biometry1, ~ alcool %fill=% genre | age_rec) + 
   geom_boxplot() + 
-  labs(title = "Consommation d'alcool en fonction de l'age et du sexe", y = "Effectifs", x = "Consommation d'alcool [verre/sem]") 
+  labs(title = "Consommation d'alcool en fonction de l'âge et du sexe", y = "Effectifs", x = "Consommation d'alcool [verres/sem]", fill = "Genre")
+
 ```
 
 $Interprétation$
 
 On observe que les femmes boivent assez peu, hors valeurs extrêmes.
 
-Chez les hommes, la consommation est plus active et augmente légèrement avec l'age (la médiane augmente). On observe également que la dispersion des valeurs est plus grande.
+Chez les hommes, la consommation est plus variable et augmente légèrement chez les seniors.
 
 ## Calcul d'indices
 
@@ -252,10 +239,8 @@ $\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
 Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
 
 ```{r plot_indice1}
-# Graphique ou tableau utilisant l'indice calculé.
-biometry <- biometry %>.%
-  smutate(.,IMC = masse_corr / (taille / 100)^2)
-  
+  biometry_clean <- biometry |> 
+  filter(IMC < 35)  
   chart(biometry,dette_sommeil ~ IMC %shape=% group_age %col=% alimentation) +
   geom_point()
 ```
@@ -328,7 +313,7 @@ combine_charts(list(a, b))
 
 <!--% Description et formule ci-dessous. -->
 
-```{r indice3}
+```{r indice3 Pierre Martin}
 
 # Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
 
@@ -338,13 +323,18 @@ biometry <- biometry %>.%
   smutate(., 
     genre_img = ifelse(genre == "H", 1, 0),
     Indice_de_masse_grasse = ((1.2 * IMC) + (0.23 * age) - (10.8 * genre_img) - 5.4))
- 
+
+tabularise$headtail(biometry) 
 
 ```
 
+L'IMG a comme formule :
+
+Pour les femmes \$\text{IMG} = (1.20 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4 \$ Pour les hommes \$ \text{IMG} = (1.20 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2 \$ Formule utilisée fusionnant les 2 formules \$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4 \$ Avec comme valeur 1 si genre = homme et 0 si genre = femme
+
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
-```{r plot_indice3}
+```{r plot_indice3 Pierre Martin}
 # Graphique ou tableau utilisant l'indice calculé.
 chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| alimentation)+
   geom_boxplot()
@@ -352,11 +342,13 @@ chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| aliment
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   ...
+-   Les femmes on en moyenne un IMG plus élevé que les hommes peu importe le régime alimentaire. (pas d'homme pour régime végétarien donc comparaison non possible)
 
--   ...
+-   Deux valeurs extrêmes sont observées pour les hommes entre 18 et 25 ans ayant un régime omnivore.
 
--   ...
+-   On observe que peu importe le régime alimentaire et le genre, quand l'âge augmente l'indice de masse grasse augmente lui aussi.
+
+-   Chez les omnivores la distributions des individus est plus grande chez les femmes dans un même groupe d'âge.
 
 ### Indice 4
 
@@ -368,9 +360,9 @@ biometry1 %>.%
 sselect(., masse, taille, genre, age_rec, age) %>.%
 smutate(.,IMC = masse / (taille / 100)^2,
 IMC = case_when(
-IMC < 18.5 ~ "Sous-poids",
+IMC < 18.5 ~ "Carence pondérale",
 IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
-IMC >= 25 & IMC < 30 ~ "Surpoids",
+IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
 IMC >= 30 ~ "Obésité")) -> biometry_imc
 biometry_imc
 biometry_imc$IMC <- as.factor(biometry_imc$IMC)
@@ -378,11 +370,21 @@ biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 tabularise$headtail(biometry_imc) 
 ```
 
-L'IMC est donné par la formule :
+L\'indice de masse corporelle (IMC) est calculé par la formule suivante :
 
 $IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
 
-L'IMC est une norme internationale permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés.
+L'IMC est une norme internationale de référence permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés. Chez les adultes, des seuils internationalement reconnus permettent de classer les individus selon leur statut pondéral :
+
+-    IMC \< 18,5 : insuffisance pondérale
+
+-    18,5 ≤ IMC \< 25 : poids normal
+
+-    25 ≤ IMC \< 30 : surpoids
+
+-    IMC ≥ 30 : obésité
+
+Chez les enfants et adolescents, des seuils spécifiques à l\'âge et au sexe, définis par l\'International Obesity Task Force (IOTF), sont utilisés pour assurer la comparabilité internationale.
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
 
@@ -401,13 +403,13 @@ labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", 
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
 
--   Il y a plus de femmes en sous-poids que les hommes.
+-   Il y a plus de femmes en carence pondérale que d'hommes.
 
--   La majorité de la population est en sous-poids ou de corpulence normale.
+-   La majorité de la population est en surcharge pondérale ou de corpulence normale.
 
--   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et son majoritairement de corpulence normale ou en surpoids.
+-   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et sont, pour la plupart de corpulence normale ou en surchage pondérale.
 
--   Les seniors, surtout les femmes, sont plus représentés en surpoids ou obèse. (notons qu'elles sont présentent en majorité) ce qui pourrait suggérer une prise de poids avec l'age. Chez les adultes matures, on observe plus de femme obèses que d'hommes obèses mais il est difficile de tirer des conclusions car ils ne représentent que 16.2% de la population considérée.
+-   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d\'âge, pourrait indiquer une tendance à la prise de poids avec l\'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d\'hommes. Toutefois, ces individus ne constituent que 16,2 % de l\'échantillon, ce qui limite la portée des conclusions possibles.
 
 ## Tests d'hypothèses
 
@@ -426,9 +428,9 @@ chisq.test(imc_tabcontingence)
 
 <!--% Hypothèse nulle et alternative -->
 
-H0 : IMC homme = IMC femme
+$H_0 : IMC_{\text{hommes}} = IMC_{\text{femmes}}$
 
-H1 : IMC homme **≠** IMC femme
+$ H_1 : IMC_{\text{hommes}} \neq IMC_{\text{femmes}} $ 
 
 <!--% Vérification des conditions d'application -->
 
@@ -438,9 +440,9 @@ tabularise(imc_tabcontingence)
 
 <!--% Interprétation statistique et biologique -->
 
-Statistique : P-valeur \> 0.05, on ne peut donc pas rejeter H0 au seuil alpha de 5 % (X-squared = 2.8929, df = 3, p-value = 0.4084)
+Statistique : P-valeur \> 0.05, on ne peut donc pas rejeter H0 au seuil alpha de 5 % (X-squared = 2.9238, df = 3, p-value = 0.4035)
 
-Biologique : Nous n'observons pas de manière significative qu'il y a une relation entre le sexe et l'IMC au seuil alpha de 5%.
+Biologique : Nous ne pouvons pas prouver de manière significative qu'il y a une relation entre le sexe et l'IMC au seuil alpha de 5%.
 
 ### Test de Chi^2^ 2
 
@@ -464,7 +466,9 @@ chisq.test(RTH_tabchi2)
 
 <!--% Interprétation statistique et biologique -->
 
--   
+-   Comme la p-value est supérieure au seuil de 5%, 0.2832 \> 0.05, nous ne pouvons pas rejetter H0 ( X-squared = 7.4271, df = 6, p-value = 0.2832). Nous nepouvons pas infirmer qu'il n'y a pas de relation entre le RTH et la consommation de sucre.
+
+Ce résultat obtenu peut être causé par un trop faible effectif d'individus statistique.
 
 <!--# Travaillez jusqu'ici pour le module 7. -->
 
@@ -555,8 +559,8 @@ biometry %>.%
     `écart type IMG` = fsd(Indice_de_masse_grasse),
     `variance IMG` = fsd(Indice_de_masse_grasse)^2,
     `n`                 = fn(Indice_de_masse_grasse)) ->
-  HG
-tabularise(HG)
+  biometry_IMG
+tabularise(biometry_IMG)
 
 #Le test de t student suppose que la distribution est normale. On peut vérifier cette distribution grâce à un graphique quantile-quantile
 # Rappel : distribution de la population…
@@ -633,9 +637,12 @@ chart$qqplot(anova_masse)
 
 ```{r Test_post_hoc}
 summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
-  linfct = multcomp::mcp(group = "Tukey"))))
-oma <- par(oma)
+  linfct = multcomp::mcp(age_rec = "Tukey"))))
+oma <- par(oma = c(0, 5.1, 0, 0))
 plot(masse_posthoc)
+par(oma)
+rm(oma)
+
 
 ```
 
@@ -649,30 +656,49 @@ Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une di
 
 ```{r plot_anova1_2}
 
-biometry %>.%
-  smutate(., chat = labelise(
-    factor(paste(genre, Consommation_alcool, sep = "-" )), "Consomation d'alcool par genre" , units = NA)) -> 
-biometry
+sgroup_by(., genre) %>.% 
+  ssummarise(.,
+    `moyenne IMG`    = fmean(Indice_de_masse_grasse),
+ `médiane IMG`    = fmedian(Indice_de_masse_grasse),
+  `écart type IMG` = fsd(Indice_de_masse_grasse),
+ `variance IMG` = fsd(Indice_de_masse_grasse)^2,
+ `n`                 = fn(Indice_de_masse_grasse)) ->
+  biometry_IMG
+tabularise(biometry_IMG)
 
-chart(data = biometry, Indice_de_masse_grasse  ~ chat ) +
+chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
+  geom_boxplot() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("Indice de masse grasse")
+
+chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
   geom_violin() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
-  ylab("IMG")
+  ylab("Indice de masse grasse")
 ```
 
 <!--% Hypothèse nulle et alternative -->
 
+$H_0 : \mu_{\text{IMG}_1} = \mu_{\text{IMG}_2} = \dots = \mu_{\text{IMG}_k}$
+
+$H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{IMG}_i} \neq \mu_{\text{IMG}_j}$
+
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova1_2}
-bartlett.test(data = biometry, Indice_de_masse_grasse ~ chat)
+bartlett.test(data = biometry, Indice_de_masse_grasse ~ genre)
 
-chat_anova <- lm (data = biometry, Indice_de_masse_grasse ~ chat )
-anova(chat_anova)|> tabularise()
+IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
+anova(IMG_anova)|> tabularise()
 
   
-chart$qqplot(chat_anova, lang = "fr")
+chart$qqplot(IMG_anova, lang = "fr")
+
+summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(genre = "Tukey"))))
+
+plot(IMG_posthoc)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -700,13 +726,36 @@ H₁ : Il y a une interaction significative entre l'alimentation et le genre sur
 ```{r test_anova2_1}
 chart$qqplot(bio_anova)
 
-bartlett.test(data = biometry, IMC ~interaction(genre, alimentation))
+bartlett.test(data = biometry, IMC ~ interaction(genre, alimentation))
 
 sselect(biometry,genre,sucre)%>.%
   table(biometry$genre, biometry$alimentation)
 ```
 
 <!--% Interprétation statistique et biologique -->
+
+**Statistique :** Dans les 3 tests réalisés, p \> 0.05, on ne peut donc pas rejeter H0 au seuil alpha de 5%.
+
+Effet du genre: ANOVA à 2 facteurs 1, Ddl = 1, Fobs = 0.111, p = 0.739
+
+Effet de l'alimentation: ANOVA à 2 facteurs 1, Ddl = 2, Fobs = 1.378, p = 0.255
+
+Test sur l'intéraction genre et alimentation : ANOVA à 2 facteurs 1, Ddl = 1, Fobs = 0.953, valeur de p = 0.331.
+
+**Biologique :**
+
+On ne peut pas montrer de différence significative d\'IMC entre les genres.
+
+On ne peut pas montrer de différence significative d\'IMC entre les types d\'alimentation.
+
+Aucun effet d\'interaction significatif n\'a été observé entre le genre et le type d\'alimentation :
+autrement dit, l'effet de l\'alimentation sur l\'IMC ne semble pas dépendre du genre.
+
+**Conditions d'application**
+
+Les résidus suivent bien une distribution presque normale mais l'ANOVA est relativement robuste à des petits écarts à la normalité.
+
+Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 13.908, df = 4, p-value = 0.007596). Les variances ne sont pas égales, un transformation des données par log donne p = 0.02814 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
 
 ### ANOVA à deux facteurs 2
 
