@@ -158,10 +158,6 @@ On observe que les femmes boivent assez peu, hors valeurs extrêmes.
 
 Chez les hommes, la consommation est plus variable et augmente légèrement chez les seniors.
 
-## Tests d'hypothèses
-
-<!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
-
 ### Indice 1
 
 ```{r indice1_Martin_Jadouille}
@@ -255,6 +251,10 @@ $Interprétation$
 -   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et sont, pour la plupart de corpulence normale ou en surchage pondérale.
 
 -   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d'âge, pourrait indiquer une tendance à la prise de poids avec l'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d'hommes. Toutefois, ces individus ne constituent que 16,2 % de l'échantillon, ce qui limite la portée des conclusions possibles.
+
+## Tests d'hypothèses
+
+<!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
 # Discussion et conclusions
 
