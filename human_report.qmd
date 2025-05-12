@@ -70,13 +70,11 @@ biometry <- read("data/biometry.rds")
 
 $Interprétation$
 
-
 ```{r description2_Martin_Jadouille}
 
 ```
 
 $Interprétation$
-
 
 ### Description par l'étudiant 2
 
@@ -86,13 +84,11 @@ $Interprétation$
 
 $Interprétation$
 
-
 ```{r description2_Louise_Dubrecq}
 
 ```
 
 $Interprétation$
-
 
 ### Description par l'étudiant 3
 
@@ -102,13 +98,11 @@ $Interprétation$
 
 $Interprétation$
 
-
 ```{r description2_Pierre_Martin}
 
 ```
 
 $Interprétation$
-
 
 ### Description par l'étudiant 4
 
@@ -168,10 +162,7 @@ Chez les hommes, la consommation est plus variable et augmente légèrement chez
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-
-
 ### Indice 1
-
 
 ```{r indice1_Martin_Jadouille}
 
@@ -184,7 +175,6 @@ La formule pour calculer cet indice est:
 ```
 
 $Interprétation$
-
 
 ### Indice 2
 
@@ -199,7 +189,6 @@ La formule pour calculer cet indice est:
 ```
 
 $Interprétation$
-
 
 ### Indice 3
 
