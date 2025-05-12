@@ -657,6 +657,7 @@ Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une di
 
 ```{r plot_anova1_2}
 
+biometry%>.%
 sgroup_by(., genre) %>.% 
   ssummarise(.,
     `moyenne IMG`    = fmean(Indice_de_masse_grasse),
