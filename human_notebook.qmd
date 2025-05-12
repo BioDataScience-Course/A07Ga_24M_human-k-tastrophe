@@ -764,10 +764,10 @@ Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédas
 
 ```{r plot_anova2_2 LouiseDubrecq}
 biometry1$RTH <- as.factor(biometry1$RTH)
-biometry1$sucre<- as.factor(biometry1$group_age)
-biometry1$RTH_group_age <- interaction(biometry1$RTH, biometry1$group_age)
+biometry1$sucre<- as.factor(biometry1$genre)
+biometry1$RTH_genre <- interaction(biometry1$RTH, biometry1$genre)
 
-anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_group_age)) %>.%
+anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_genre)) %>.%
 tabularise(.)
 ```
 
@@ -781,18 +781,18 @@ tabularise(.)
 
 ```{r test_anova2_2 LouiseDubrecq}
 #Graphique des intéractions
-sgroup_by(biometry1, RTH, group_age)
-ssummarise(biometry1, masse_corr_moyenne = mean(masse_corr))
+sgroup_by(biometry1, RTH, genre) %>.%
+ssummarise(., masse_corr_moyenne = fmean(masse_corr)) %>.%
 
-chart(biometry1, masse_corr_moyenne %col=% RTH %group=% group_age)
-+ geom_line()
-+ geom_point()
+chart(data = ., masse_corr_moyenne ~ RTH %col=% genre %group=% genre) +
+ geom_line() +
+ geom_point()
 
 #Vérification des variables et données
-tabularise$headtail(sselect(biometry1, masse_corr, group_age, RTH))
+tabularise$headtail(sselect(biometry1, masse_corr, genre, RTH))
 
 biometry1 %>.%
-sgroup_by(., RTH, group_age) %>.%
+sgroup_by(., RTH, genre) %>.%
 ssummarise(.,
 mean = fmean(masse_corr),
 var = fvar(masse_corr),
@@ -802,12 +802,12 @@ count = fnobs(masse_corr))
 chart$qqplot(RTH_anova2)
 
 #Vérification d'homoscédasticité
-bartlett.test(data = biometry1, masse_corr ~ interaction(RTH, group_age))
+bartlett.test(data = biometry1, masse_corr ~ interaction(RTH, genre))
 
 #Test Posthoc
 
 summary(RTH_testposthoc <- confint(multcomp::glht(RTH_anova2,
-  linfct = multcomp::mcp(RTH_group_age = "Tukey"))))
+  linfct = multcomp::mcp(RTH_genre = "Tukey"))))
 oma <- par(oma = c(0, 5.1, 0, 0))
 plot(RTH_testposthoc)
 
