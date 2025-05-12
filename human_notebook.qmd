@@ -104,7 +104,7 @@ biometry %>.%
     "moyenne de la masse (kg)" = fmean(masse_corr),
     "moyenne de la taille (cm)" = fmean(taille),
     "moyenne d'activités physiques (min)" = fmean(activite_physique),
-    "moyenne de l'IMC" = fmean(masse_corr/(taille)^2),
+    "moyenne de l'IMC" = fmean(masse_corr/(taille/100)^2),
     "n" = fn(masse_corr)) ->
   Moyenne_tab
 tabularise(Moyenne_tab, auto.labs = FALSE)
@@ -267,13 +267,13 @@ $Interprétation$
   biometry1 <- smutate(biometry1,
    RTH = ifelse(genre == "F",
       case_when(
-         ratio_taille_hanche < 0.65 ~ "Obésité gynoïde",
+         ratio_taille_hanche < 0.65 ~ "gynoïde",
          ratio_taille_hanche >= 0.65 & ratio_taille_hanche < 0.8 ~ "Normal",
-         ratio_taille_hanche >= 0.8 ~ "Obesité androïde"), 
+         ratio_taille_hanche >= 0.8 ~ "androïde"), 
       case_when(
-    ratio_taille_hanche < 0.85 ~ "Obésité gynoïde",
+    ratio_taille_hanche < 0.85 ~ "gynoïde",
     ratio_taille_hanche >= 0.85 & ratio_taille_hanche < 0.95 ~ "Normal",
-    ratio_taille_hanche >= 0.95 ~ "Obesité androïde")))
+    ratio_taille_hanche >= 0.95 ~ "androïde")))
 ```
 
 <!--% Graphique ou tableau utilisant l'indice calculé.-->
@@ -283,13 +283,13 @@ $Interprétation$
 
 a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
   geom_boxplot(show.legend = FALSE) +
-  labs(title = "Masse des femmes selon le type d'obésité",
+  labs(title = "Masse des femmes",
        x = "Type d'obésité",
        y = "Masse (kg)")
 
 b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
   geom_boxplot(show.legend = FALSE) +
-  labs(title = "Masse des hommes selon le type d'obésité",
+  labs(title = "Masse des hommes",
        x = "Type d'obésité",
        y = "Masse (kg)")
 
@@ -779,6 +779,14 @@ tabularise(.)
 <!--% Vérification des conditions d'application -->
 
 ```{r test_anova2_2 LouiseDubrecq}
+#Graphique des intéractions
+sgroup_by(biometry1, RTH, group_age)
+ssummarise(biometry1, masse_corr_moyenne = mean(masse_corr))
+
+chart(biometry1, masse_corr_moyenne %col=% RTH %group=% group_age)
++ geom_line()
++ geom_point()
+
 #Vérification des variables et données
 tabularise$headtail(sselect(biometry1, masse_corr, group_age, RTH))
 
