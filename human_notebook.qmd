@@ -239,10 +239,11 @@ $\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
 Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
 
 ```{r plot_indice1}
-  biometry_clean <- biometry |> 
-  filter(IMC < 35)  
-  chart(biometry,dette_sommeil ~ IMC %shape=% group_age %col=% alimentation) +
-  geom_point()
+  biometry <- biometry %>.%
+  smutate(.,IMC = masse_corr / (taille / 100)^2)  
+  chart(biometry,dette_sommeil ~ IMC | group_age ) +
+  geom_boxplot()+
+    geom_jitter(alpha = 0.3, width = 0.2, height = 0, color = "blue")
 ```
 
 <!--% Interprétation en quelques points du graphique ou tableau. -->
@@ -251,7 +252,7 @@ $Interprétation$
 
 -   Une grande partie des individus sont en manque de sommeil.
 
--   Presque tous les carnivores ont une dette de sommeil. Cela pourrait être expliqué par certaines molécules comme la tyrosine dans certaines viandes.
+-   Plus on vieillit, plus la dette de sommeil diminue.
 
 -   On ne remarque pas de tendance particulière et encore moins celle attendue. Normalement, les personnes ayant une dette de sommeil ont un IMC plus élevé.
 
