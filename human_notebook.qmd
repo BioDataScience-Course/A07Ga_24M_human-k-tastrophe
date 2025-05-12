@@ -528,6 +528,10 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 
 <!-- Interprétation statistique et biologique -->
 
+$Interprétation$
+
+Nous pouvons rejeter H0 au seuil alpha de 5%, il y a donc une différence significative entre la taille des hommes et celle des femmes (Student t test, t = 12.366, df = 138, p-value = 2.2e\^-16)
+
 ### Test t de Student 2
 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
