@@ -104,7 +104,7 @@ biometry %>.%
     "moyenne de la masse (kg)" = fmean(masse_corr),
     "moyenne de la taille (cm)" = fmean(taille),
     "moyenne d'activités physiques (min)" = fmean(activite_physique),
-    "moyenne de l'IMC" = fmean(IMC),
+    "moyenne de l'IMC" = fmean(masse_corr/(taille)^2),
     "n" = fn(masse_corr)) ->
   Moyenne_tab
 tabularise(Moyenne_tab, auto.labs = FALSE)
@@ -260,10 +260,10 @@ $Interprétation$
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice2 LouiseDUBRECQ}
- RTH_Categorie <- smutate(biometry,
+ biometry1 <- smutate(biometry,
   ratio_taille_hanche = tour_taille / tour_hanche)
   
-  RTH_Categorie <- smutate(RTH_Categorie,
+  biometry1 <- smutate(biometry1,
    RTH = ifelse(genre == "F",
       case_when(
          ratio_taille_hanche < 0.65 ~ "Obésité gynoïde",
@@ -280,13 +280,13 @@ $Interprétation$
 ```{r plot_indice2 LouiseDUBRECQ}
 
 
-a <- chart(RTH_Categorie[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
+a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
   geom_boxplot(show.legend = FALSE) +
   labs(title = "Masse des femmes selon le type d'obésité",
        x = "Type d'obésité",
        y = "Masse (kg)")
 
-b <- chart(RTH_Categorie[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
+b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
   geom_boxplot(show.legend = FALSE) +
   labs(title = "Masse des hommes selon le type d'obésité",
        x = "Type d'obésité",
@@ -449,7 +449,7 @@ Biologique : Nous ne pouvons pas prouver de manière significative qu'il y a une
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_chi2_2 LouiseDubrecq}
-RTH_tabchi2 <- table(RTH_Categorie$sucre, RTH_Categorie$RTH)
+RTH_tabchi2 <- table(biometry1$sucre, biometry1$RTH)
 tabularise(RTH_tabchi2)
 ```
 
@@ -527,6 +527,10 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 ```
 
 <!-- Interprétation statistique et biologique -->
+
+$Interprétation$
+
+Nous pouvons rejeter H0 au seuil alpha de 5%, il y a donc une différence significative entre la taille des hommes et celle des femmes (Student t test, t = 12.366, df = 138, p-value = 2.2e\^-16)
 
 ### Test t de Student 2
 
@@ -757,7 +761,11 @@ Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédas
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova2_2 LouiseDubrecq}
-anova(RTH_anova2 <- lm(data = RTH_Categorie, masse ~ RTH * sucre)) %>.%
+biometry1$RTH <- as.factor(biometry1$RTH)
+biometry1$sucre<- as.factor(biometry1$group_age)
+biometry1$RTH_group_age <- interaction(biometry1$RTH, biometry1$group_age)
+
+anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_group_age)) %>.%
 tabularise(.)
 ```
 
@@ -771,27 +779,32 @@ tabularise(.)
 
 ```{r test_anova2_2 LouiseDubrecq}
 #Vérification des variables et données
-RTH_Categorie_2 <- sselect(RTH_Categorie, masse, genre, RTH)
-tabularise$headtail(RTH_Categorie_2)
+tabularise$headtail(sselect(biometry1, masse_corr, group_age, RTH))
 
-RTH_Categorie %>.%
-sgroup_by(., RTH, sucre) %>.%
+biometry1 %>.%
+sgroup_by(., RTH, group_age) %>.%
 ssummarise(.,
-mean = fmean(masse),
-var = fvar(masse),
-count = fnobs(masse))
+mean = fmean(masse_corr),
+var = fvar(masse_corr),
+count = fnobs(masse_corr))
 
 #Analyse de la distribution des résidus :
 chart$qqplot(RTH_anova2)
 
 #Vérification d'homoscédasticité
-bartlett.test(data = RTH_Categorie, masse ~ interaction(RTH, sucre))
+bartlett.test(data = biometry1, masse_corr ~ interaction(RTH, group_age))
+
+#Test Posthoc
+
+summary(RTH_testposthoc <- confint(multcomp::glht(RTH_anova2,
+  linfct = multcomp::mcp(RTH_group_age = "Tukey"))))
+oma <- par(oma = c(0, 5.1, 0, 0))
+plot(RTH_testposthoc)
+
 
 ```
 
 <!--% Interprétation statistique et biologique -->
-
-(pense à faire un test post hoc)
 
 # Discussion et conclusions
 
