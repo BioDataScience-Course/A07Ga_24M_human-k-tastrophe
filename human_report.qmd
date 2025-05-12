@@ -43,7 +43,11 @@ Comment les données anthropométrique de notre échantillon de la population be
 
 <!--% Cette section doit comprendre une explication technique sur les mesures effectuées et sur le protocole relatif à l'acquisition des données en 3 à 4 paragraphes. Vous ajouterez aussi un paragraphe qui détaille les outils logiciels et statistiques utilisés (logiciels et versions des logiciels). Un simple copier-coller du matériel et méthodes du bloc-notes ne sera PAS considéré comme acceptable. -->
 
-...Votre matmet ici...
+Dans le cadre de ce travail, les données ont été collectées fin 2024 par une classe de 36 élèves. Chaque élèves a dû mesurés 4 personnes( aléatoire, famille, amis,\...) pour un total de 144 personnes. Les variables à mesurer ont été définies collectivement avant le début des relevées pour une parfaite compréhension entre tout les élèves. ces variables ont été listées dans un dictionnaires de données. Celui-ci permet une uniformisations des relevées pour les unités, le noms des variables,\...
+
+De plus, pour limiter les erreurs de mesures sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
+
+Nous avons également du suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tout les volontaires sont donc sous la forme d'un identifiant.
 
 # Résultats
 

@@ -80,9 +80,8 @@ $Interprétation$
 
 -   On remarque que les hommes ont une moyenne de tour de poignet, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
 
-```{=html}
 <!-- -->
-```
+
 -   Deux genres ont été échantillonnés : les femmes et les hommes, pour un total de 144 personnes. Les deux genres ne sont pas équilibrés, il y a 14 femmes de plus que d'hommes
 
 ### Description par l'étudiant 2
@@ -525,6 +524,10 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 
 <!-- Interprétation statistique et biologique -->
 
+$Interprétation$
+
+Nous pouvons rejeter H0 au seuil alpha de 5%, il y a donc une différence significative entre la taille des hommes et celle des femmes (Student t test, t = 12.366, df = 138, p-value = 2.2e\^-16)
+
 ### Test t de Student 2
 
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
@@ -754,9 +757,8 @@ bartlett.test(data = RTH_Categorie, masse ~ interaction(RTH, sucre))
 
     Nous pouvons donc retirer le test Chi2 1 car il nous montre également qu'il n'y a pas de lien entre l'IMC et le genre tout comme l'ANOVA à deux facteur 1 qui lui est plus puissant et qui montre une intéraction supplémentaire.
 
-```{=html}
 <!-- -->
-```
+
 -   ...
 
 -   ...
