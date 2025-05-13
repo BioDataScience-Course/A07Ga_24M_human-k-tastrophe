@@ -39,9 +39,7 @@ Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un 
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
-1\) Comment les données anthropométrique de notre échantillon de la population belge et celles obtenues par \@lebacq2015 reflètent elle l'état de santé de la population?
-
-2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l'état de santé de la population belge ?
+Que révèlent les données anthropométriques de notre échantillon et celles de @lebacq2015 sur l'état de santé de la population belge ?
 
 # Matériel et méthodes
 
@@ -51,9 +49,7 @@ Dans le cadre de ce travail, les données ont été collectées fin 2024 par une
 
 De plus, pour limiter les erreurs de mesure sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
-1\) Nous avons également dû suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tous les volontaires sont donc sous la forme d'un identifiant.
-
-2\) Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
+Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
 
 Les données et les tests statistiques sont réalisés avec le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow" et un système d'exploitation Linux 64 bits, avec une architecture x86_64.
 
@@ -88,26 +84,14 @@ tab_sex_age <- table(biometry$age_rec, biometry$genre)
 #NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
 
 dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
-names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
+names(dimnames(tab_sex_age)) <- c("Tranche_d_âge", "Genre")
 
 
 # Affichage du tableau
 tabularise(tab_sex_age)
 ```
 
-$Interprétation$
-
-Dans la population considérée :
-
-Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
-
-Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
-
-Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
-
-Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
-
-```{r description}
+```{r description 2}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
   geom_point() +
   xlab("Taille(cm)") +
@@ -123,7 +107,7 @@ geom_point() +
 combine_charts(list(A, B))
 ```
 
-```{r description}
+```{r description 3}
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
@@ -159,43 +143,61 @@ tabularise(Moyenne_tab_act, auto.labs = FALSE)
 
 ```
 
-```{r description}
+```{r description 4}
 chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
   xlab("Genre") +
   ylab("Taille (m)") +
-  labs (title = "Taille des individus selon leur genre et leur alimentation")+
+  labs(title = "Taille des individus selon leur genre et leur alimentation") +
   geom_boxplot()
+
+biometry %>.%
+sselect(biometry,genre, alimentation) %>.%
+table(biometry$genre, biometry$alimentation) -> regime_tab
+dimnames(regime_tab) <- list(Genre = c("Femme", "Homme"),
+Alimentation = c("Omnivore", "Carnivore", "Végétarien"))
+names(dimnames(regime_tab)) <- c( "Genre", "Régime_alimentaire")
+  tabularise(regime_tab)
 ```
 
 $Interprétation$
 
-Le **graphique 1** met en évidence deux tendances principales : les hommes sont globalement plus grands et plus lourds que les femmes, et une **relation positive** est visible entre la **masse** des individus et leur **taille ou tour de hanche**, tous genres confondus. Cette corrélation visuelle suggère que **la morphologie diffère entre les genres**, hypothèse explorée plus rigoureusement par un test statistique ultérieur.
+L'échantillon analysé est composé majoritairement de jeunes adultes (64,1 %), avec une répartition équilibrée entre hommes et femmes dans cette tranche d'âge. Les adultes matures représentent 16,2 % de la population, dont 60 % sont des femmes, tandis que les seniors constituent 19,7 %, avec une proportion féminine de 60,7 %. Ces déséquilibres de genre dans les tranches d'âge les plus élevées devront être pris en compte dans l'interprétation des résultats, notamment lorsqu'il s'agit d'analyser les effets de l'âge ou du sexe.
 
-Les **tableaux** viennent préciser et compléter cette première observation. Sur le plan **morphologique**, les hommes présentent des valeurs moyennes plus élevées en taille, masse, tour de taille et tour de poignet, tandis que les femmes ont un tour de hanche plus développé, ce qui confirme une différence de silhouette.
+Le premier graphique met en évidence une relation positive entre la taille et la masse corporelle, quel que soit le genre. Il illustre également que les hommes sont en moyenne plus grands et plus lourds que les femmes. On y remarque une variation dans la forme de la courbe selon le sexe, ce qui suggère des morphologies différentes entre hommes et femmes -- une hypothèse explorée plus précisément dans la suite de l'analyse.
 
-Concernant les **habitudes de vie**, les hommes se distinguent par une activité physique plus importante, une consommation plus fréquente d'alcool et de fast-food. À l'inverse, les femmes déclarent fumer davantage. Malgré ces différences de comportement, l'**IMC moyen** reste similaire entre les deux groupes (autour de 25), suggérant des styles de vie compensés d'une certaine manière.
+Les tableaux de synthèse viennent appuyer ces observations en détaillant les différences morphologiques et comportementales entre les genres. Les hommes présentent une taille, une masse, un tour de poignet et un tour de taille moyens supérieurs à ceux des femmes, tandis que les femmes ont un tour de hanche plus élevé. Ces différences confortent l'idée de profils corporels distincts.
 
-En croisant ces éléments visuels et numériques, on observe donc des **différences claires entre les genres**, tant sur le **plan corporel** que **comportemental**, avec une certaine cohérence entre les sources d'information.
+Sur le plan des comportements liés à la santé, les femmes déclarent fumer davantage, mais les hommes consomment plus d'alcool, fréquentent plus les fast-foods et pratiquent davantage d'activité physique. Malgré ces divergences, l'IMC moyen est similaire dans les deux groupes, légèrement au-dessus de 25, suggérant un niveau comparable de surcharge pondérale.
 
-Boite à moustache
-
-Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
+Le dernier graphique explore le lien entre régime alimentaire, genre et taille. On y confirme que les hommes sont plus grands que les femmes, tous régimes confondus. Chez les hommes, la taille médiane varie peu entre omnivores et carnivores. Chez les femmes, les végétariennes semblent légèrement plus grandes que les carnivores, avec une taille comparable aux omnivores. Toutefois, les effectifs très faibles dans les groupes carnivore et végétarien, ainsi que des données manquantes chez les hommes, limitent fortement l'interprétation de ces résultats.(voir tableau sur les effectifs en fonction du régime alimentaire) On ne peut, à ce stade, tirer aucune conclusion solide sur l'effet du régime alimentaire sur la taille.
 
 ## Indices de santé
 
 ### Indice 1
 
-```{r indice1_Martin_Jadouille}
+```{r indice4__Sarah_Delapierre}
+#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
 
+biometry1 <- biometry %>%
+  drop_na()
+
+biometry1 %>.%
+  sselect(., masse, taille, genre, age_rec, age) %>.%
+  smutate(.,
+    IMC = masse / (taille / 100)^2,
+    IMC_cat = case_when(
+      IMC < 18.5 ~ "Carence pondérale",
+      IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
+      IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
+      IMC >= 30 ~ "Obésité")
+  ) -> biometry_imc
+
+biometry_imc$IMC_cat <- as.factor(biometry_imc$IMC_cat)
 ```
 
 La formule pour calculer cet indice est:
 
-```{r plot_indice1_Martin_Jadouille}
-
-```
-
-$Interprétation$
+$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
 
 ### Indice 2
 
@@ -215,96 +217,48 @@ $Interprétation$
     ratio_taille_hanche >= 0.95 ~ "androïde")))
 ```
 
-La formule pour calculer cet indice est: tour de taille / tour de hanche.
+La formule pour calculer cet indice est :
 
-```{r plot_indice1_Louise_Dubrecq}
-a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
-  geom_boxplot(show.legend = FALSE) +
-  labs(title = "Masse des femmes",
-       x = "Type d'obésité",
-       y = "Masse (kg)") 
-  
-
-b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
-  geom_boxplot(show.legend = FALSE) +
-  labs(title = "Masse des hommes",
-       x = "Type d'obésité",
-       y = "Masse (kg)")
-
-
-
-combine_charts(list(a, b))
-```
-
-$Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
-
-$Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
+$$
+RTH = \frac{\text{Tour de taille (cm)}}{\text{Tour de hanche (cm)}}
+$$
 
 ### Indice 3
 
 ```{r indice1__Pierre_Martin}
 
+# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+
+#IMG=(1.51×IMC)+(0.70× age)−(3.6×sexe)−1.4
+
+biometry <- biometry %>.%
+  smutate(., 
+    genre_img = ifelse(genre == "H", 1, 0),
+    Indice_de_masse_grasse = ((1.2 * IMC) + (0.23 * age) - (10.8 * genre_img) - 5.4))
+
+tabularise$headtail(biometry) 
+
 ```
 
 La formule pour calculer cet indice est:
 
-```{r plot_indice1__Pierre_Martin}
+Pour les femmes
 
-```
+$$ {IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4 $$
 
-### Indice 4
+Pour les hommes
 
-```{r indice4__Sarah_Delapierre}
-#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-biometry1 %>.%
-sselect(., masse, taille, genre, age_rec, age) %>.%
-smutate(.,IMC = masse / (taille / 100)^2,
-IMC = case_when(
-IMC < 18.5 ~ "Carence pondérale",
-IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
-IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
-IMC >= 30 ~ "Obésité")) -> biometry_imc
-biometry_imc
-biometry_imc$IMC <- as.factor(biometry_imc$IMC)
+$$ {IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2) $$
 
-tabularise$headtail(biometry_imc) 
-```
+Formule utilisée fusionnant les 2 formules
 
-La formule pour calculer cet indice est:
+$$ {IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4 $$
 
-$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
-
-L'IMC est une norme internationale de référence permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés. Chez les adultes, des seuils internationalement reconnus permettent de classer les individus selon leur statut pondéral :
-
--   IMC \< 18,5 : insuffisance pondérale
-
--   18,5 ≤ IMC \< 25 : poids normal
-
--   25 ≤ IMC \< 30 : surpoids
-
--   IMC ≥ 30 : obésité
-
-Chez les enfants et adolescents, des seuils spécifiques à l'âge et au sexe, définis par l'International Obesity Task Force (IOTF), sont utilisés pour assurer la comparabilité internationale.
-
-```{r plot_indice4_sarah_delapierre}
-#1
-chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
-geom_bar() +
-coord_flip() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age") + 
-  geom_hline(yintercept = 10, color = "red") + 
-  geom_hline(yintercept = 20, color = "red")
-```
+Avec comme valeur 1 si genre = homme et 0 si genre = femme
 
 $Interprétation$
 
--   Il y a plus de femmes en carence pondérale que d'hommes.
-
--   La majorité de la population est en surcharge pondérale ou de corpulence normale.
-
--   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et sont, pour la plupart de corpulence normale ou en surchage pondérale.
-
--   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d'âge, pourrait indiquer une tendance à la prise de poids avec l'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d'hommes. Toutefois, ces individus ne constituent que 16,2 % de l'échantillon, ce qui limite la portée des conclusions possibles.
+L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpulence d'un individu : de savoir si il se trouve en sous-poids, à corpulence normale, en surpoids ou en obésité. La mesure de l'IMC ne tient pas en compte du genre de l'individu. Cette variable nous permettra ensuite de pouvoir calculer l'IMG, l'indice de masse grasse, qui lui prendra en compte le genre de l'individu. Cet indice nous donnera la masse grasse d'un individu et par extension sa masse maigre. Le ratio de tour taille/tour de hanche, quant à lui permettra d'appuyer les données en fournissant plus d'informations sur la répartition de la masse grasse, ce qui permettra ainsi de déduire si le type d'obésité est soit normal, soit androïde soit gynoide.
 
 ## Tests d'hypothèses
 
@@ -313,19 +267,27 @@ $Interprétation$
 Comparaison de la masse par tranche d'âge :
 
 ```{r Anova à 1 facteur}
-anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
+#NB : obtenir des valeurs suppl sans savoir à quoi cela se rapporte = présence de valeurs manquantes. (→sdrop.na() ou )
+biometry1 %>.%
+sgroup_by(., age_rec) %>.%
+ssummarise(.,
+"Moyenne IMC" = fmean(IMC)) ->     imc_tab
+names(imc_tab)[1] <- "Classe d'âge"
+tabularise(imc_tab, auto.labs = FALSE)
 
 
-chart(data = biometry_imc, masse ~ age_rec) +
+chart(data = biometry_imc[!is.na(biometry_imc$age_rec), ], IMC ~ age_rec) +
   geom_boxplot() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary( geom = "point", fun = "mean" , color = "red") +  
-  labs(title = "Moyennes de poids par tranche d'âge", y = "Masse", x = "Tranche d'âge") 
+  labs(title = "IMC par tranche d'âge", y = "IMC", x = "Tranche d'âge") 
 
-summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
+anova(anova_IMC <- lm(data = biometry1, IMC ~ age_rec))|> tabularise()
+
+summary(IMC_posthoc <- confint(multcomp::glht(anova_IMC,
   linfct = multcomp::mcp(age_rec = "Tukey"))))
 oma <- par(oma = c(0, 5.1, 0, 0))
-plot(masse_posthoc)
+plot(IMC_posthoc)
 par(oma)
 rm(oma)
 ```
