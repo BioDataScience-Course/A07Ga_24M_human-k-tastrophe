@@ -39,9 +39,7 @@ Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un 
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
-1\) Comment les données anthropométrique de notre échantillon de la population belge et celles obtenues par \@lebacq2015 reflètent elle l'état de santé de la population?
-
-2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l'état de santé de la population belge ?
+Que révèlent les données anthropométriques de notre échantillon et celles de @lebacq2015 sur l'état de santé de la population belge ?
 
 # Matériel et méthodes
 
@@ -51,9 +49,7 @@ Dans le cadre de ce travail, les données ont été collectées fin 2024 par une
 
 De plus, pour limiter les erreurs de mesure sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
-1\) Nous avons également dû suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tous les volontaires sont donc sous la forme d'un identifiant.
-
-2\) Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
+Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
 
 Les données et les tests statistiques sont réalisés avec le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow" et un système d'exploitation Linux 64 bits, avec une architecture x86_64.
 
@@ -94,18 +90,6 @@ names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
 # Affichage du tableau
 tabularise(tab_sex_age)
 ```
-
-$Interprétation$
-
-Dans la population considérée :
-
-Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
-
-Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
-
-Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
-
-Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
 
 ```{r description}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
@@ -168,6 +152,10 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 ```
 
 $Interprétation$
+
+Dans la population considérée, il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme. Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60% et les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+
+Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
 
 Le **graphique 1** met en évidence deux tendances principales : les hommes sont globalement plus grands et plus lourds que les femmes, et une **relation positive** est visible entre la **masse** des individus et leur **taille ou tour de hanche**, tous genres confondus. Cette corrélation visuelle suggère que **la morphologie diffère entre les genres**, hypothèse explorée plus rigoureusement par un test statistique ultérieur.
 
