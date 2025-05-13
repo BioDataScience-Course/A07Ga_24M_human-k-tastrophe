@@ -681,7 +681,7 @@ chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
   ylab("Indice de masse grasse")
 ```
 
-<!--% Hypothèse nulle et alternative -->
+!\--% Hypothèse nulle et alternative \--\>
 
 $H_0 : \mu_{\text{IMG}_1} = \mu_{\text{IMG}_2} = \dots = \mu_{\text{IMG}_k}$
 
@@ -851,6 +851,10 @@ plot(RTH_testposthoc)
 -   ...
 
 -   ...
+
+-   Le test de CHI2 a pour résultat qu'on ne peut pas affirmer significativement qu\'il n\'y a pas de relation entre le rapport taille hanche et la consommation de sucre.
+
+-   En conclusion de l'ANOVA à deux facteurs, le rapport taille hanche influence différemment de manière significative la masse selon le genre.
 
 <!--# Important : ce document doit compiler SANS ERREURS avec le bouton 'Rendu' sinon le travail sera sanctionné lourdement. La compilation du document Quarto est maintenant considérée comme acquise. -->
 
