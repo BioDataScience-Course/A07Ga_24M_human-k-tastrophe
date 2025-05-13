@@ -1,5 +1,5 @@
 ---
-title: "Lien entre la santé et données anthropométriques dans un échantillon"
+title: "Lien entre la santé et données anthropométriques d'un échantillon"
 author: "MartinJadouille, LouiseDubrecq, PierreMartin, SarahDelapierre"
 date: "`r Sys.Date()`"
 format:
@@ -48,6 +48,10 @@ Dans le cadre de ce travail, les données ont été collectées fin 2024 par une
 De plus, pour limiter les erreurs de mesures sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
 Nous avons également du suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tout les volontaires sont donc sous la forme d'un identifiant.
+
+Les données et les tests statistiques sont réalisés avec le package SciViews Box 2024 en utilisant le système d'exploitation linux avec le le logiciel R en version 4.3.0 version string.
+
+# Résultats
 
 # Résultats
 
@@ -158,13 +162,10 @@ On observe que les femmes boivent assez peu, hors valeurs extrêmes.
 
 Chez les hommes, la consommation est plus variable et augmente légèrement chez les seniors.
 
-<<<<<<< HEAD
 ## Tests d'hypothèses
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-=======
->>>>>>> 74b90b7b069d39279354080751a0a5f6b3b4bb5d
 ### Indice 1
 
 ```{r indice1_Martin_Jadouille}

@@ -68,19 +68,18 @@ $Interprétation$
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
-    "moyenne du tour de poignet" = fmean(tour_poignet),
-    "moyenne de la taille" = fmean(tour_taille),
-    "moyenne du tour de hanche" = fmean(tour_hanche),
-    "moyenne de la masse" = fmean(masse_corr),
+    "Moyenne du tour de poignet(cm)" = fmean(tour_poignet),
+    "Moyenne de la taille(cm)" = fmean(taille),
+    "Moyenne du tour de hanche(cm)" = fmean(tour_hanche),
+    "Moyenne de la masse(kg)" = fmean(masse_corr),
+    "Moyenne du tour de taille(cm)" = fmean(tour_taille),
     "n" = fn(genre))%>.%
 tabularise(.)
 ```
 
 $Interprétation$
 
--   On remarque que les hommes ont une moyenne de tour de poignet, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
-
-<!-- -->
+-   On remarque que les hommes ont une moyenne de tour de poignet, de tour de taille, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
 
 -   Deux genres ont été échantillonnés : les femmes et les hommes, pour un total de 144 personnes. Les deux genres ne sont pas équilibrés, il y a 14 femmes de plus que d'hommes
 
@@ -649,7 +648,17 @@ rm(oma)
 
 <!--% Interprétation statistique et biologique -->
 
+**Conditions d'application**
+
+Nous observons que les residus suivent une distribution normale a l'exception des extrême.
+
+Le test de Bartlett nous montre qu'il y a bien homoscédasticité car p-value \> 0.05.
+
+**ANOVA et post-hoc**
+
 Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence significative entre au moins 2 groupes au seuil alpha de 5% (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+
+Un test post-hoc à donc été réaliser pour savoir quels groupes diffèrent l'un de l'autre. Lintervalle de confiance des groupe séniors et jeunes adultes ne croisent pas la ligne 0. Cela indique qu'il y a une différence significative entre ces 2 groupes.
 
 ### ANOVA à un facteur 2
 
