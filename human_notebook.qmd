@@ -68,19 +68,18 @@ $Interprétation$
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
-    "moyenne du tour de poignet" = fmean(tour_poignet),
-    "moyenne de la taille" = fmean(tour_taille),
-    "moyenne du tour de hanche" = fmean(tour_hanche),
-    "moyenne de la masse" = fmean(masse_corr),
+    "Moyenne du tour de poignet(cm)" = fmean(tour_poignet),
+    "Moyenne de la taille(cm)" = fmean(taille),
+    "Moyenne du tour de hanche(cm)" = fmean(tour_hanche),
+    "Moyenne de la masse(kg)" = fmean(masse_corr),
+    "Moyenne du tour de taille(cm)" = fmean(tour_taille),
     "n" = fn(genre))%>.%
 tabularise(.)
 ```
 
 $Interprétation$
 
--   On remarque que les hommes ont une moyenne de tour de poignet, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
-
-<!-- -->
+-   On remarque que les hommes ont une moyenne de tour de poignet, de tour de taille, de taille et de masse supérieure à celles des femmes mais que les femmes ont une moyenne de tour de hanche supérieure.
 
 -   Deux genres ont été échantillonnés : les femmes et les hommes, pour un total de 144 personnes. Les deux genres ne sont pas équilibrés, il y a 14 femmes de plus que d'hommes
 
@@ -649,7 +648,17 @@ rm(oma)
 
 <!--% Interprétation statistique et biologique -->
 
+**Conditions d'application**
+
+Nous observons que les residus suivent une distribution normale a l'exception des extrême.
+
+Le test de Bartlett nous montre qu'il y a bien homoscédasticité car p-value \> 0.05.
+
+**ANOVA et post-hoc**
+
 Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence significative entre au moins 2 groupes au seuil alpha de 5% (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+
+Un test post-hoc à donc été réaliser pour savoir quels groupes diffèrent l'un de l'autre. Lintervalle de confiance des groupe séniors et jeunes adultes ne croisent pas la ligne 0. Cela indique qu'il y a une différence significative entre ces 2 groupes.
 
 ### ANOVA à un facteur 2
 
@@ -681,7 +690,7 @@ chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
   ylab("Indice de masse grasse")
 ```
 
-<!--% Hypothèse nulle et alternative -->
+!\--% Hypothèse nulle et alternative \--\>
 
 $H_0 : \mu_{\text{IMG}_1} = \mu_{\text{IMG}_2} = \dots = \mu_{\text{IMG}_k}$
 
@@ -705,6 +714,10 @@ plot(IMG_posthoc)
 
 <!--% Interprétation statistique et biologique -->
 
+Selon l'anova, il y a une différence très significative de l'indice de masse graisseuse entre les femmes et les hommes (Anova un facteur, ddl : 1, Fobs : 60.2, p : 1.57 \* 10\^(-12)).
+
+Le test post hoc confirme également la conclusion de l'anova (les intervalles de confiance ne passant pas par zéro).
+
 <!--# Travaillez jusqu'ici pour le module 9. Commencez à rédiger la partie résultats avec la description des données. -->
 
 ### ANOVA à deux facteurs 1
@@ -712,7 +725,21 @@ plot(IMG_posthoc)
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova2_1}
-anova(bio_anova<-lm(data = biometry, IMC ~ genre * alimentation))%>.%
+
+biometry <- biometry %>%
+  sfilter(alimentation != "végétarien") %>%
+  smutate(ali_sans_veg= alimentation)
+biometry <- biometry %>%
+  sfilter(ali_sans_veg != "végétarien") %>%
+  smutate(ali_sans_veg = fct_drop(ali_sans_veg))
+biometry%>.%
+  sgroup_by(.,ali_sans_veg, genre) %>%              # Ensuite grouper
+  ssummarise(IMC_mean = mean(IMC, na.rm = TRUE)) %>%
+  chart(IMC_mean ~ genre %col=% ali_sans_veg ) +
+  geom_line(aes(group = ali_sans_veg)) +
+  geom_point()
+
+anova(bio_anova<-lm(data = biometry, IMC ~ genre * ali_sans_veg))%>.%
     tabularise(.)
 
 ```
@@ -728,10 +755,10 @@ H₁ : Il y a une interaction significative entre l'alimentation et le genre sur
 ```{r test_anova2_1}
 chart$qqplot(bio_anova)
 
-bartlett.test(data = biometry, IMC ~ interaction(genre, alimentation))
+bartlett.test(data = biometry, log(IMC) ~ interaction(genre, ali_sans_veg))
 
 sselect(biometry,genre,sucre)%>.%
-  table(biometry$genre, biometry$alimentation)
+  table(biometry$genre, biometry$ali_sans_veg)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -756,7 +783,7 @@ Aucun effet d'interaction significatif n'a été observé entre le genre et le t
 
 Les résidus suivent bien une distribution presque normale mais l'ANOVA est relativement robuste à des petits écarts à la normalité.
 
-Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 13.908, df = 4, p-value = 0.007596). Les variances ne sont pas égales, un transformation des données par log donne p = 0.02814 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
+Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 13.908, df = 4, p-value = 0.007596). Les variances ne sont pas égales, une transformation des données par log donne p = 0.02814 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
 
 ### ANOVA à deux facteurs 2
 
@@ -835,6 +862,10 @@ Les individus ayant les masses les plus élevés
 -   ...
 
 -   ...
+
+-   Le test de CHI2 a pour résultat qu'on ne peut pas affirmer significativement qu'il n'y a pas de relation entre le rapport taille hanche et la consommation de sucre.
+
+-   En conclusion de l'ANOVA à deux facteurs, le rapport taille hanche influence différemment de manière significative la masse selon le genre.
 
 <!--# Important : ce document doit compiler SANS ERREURS avec le bouton 'Rendu' sinon le travail sera sanctionné lourdement. La compilation du document Quarto est maintenant considérée comme acquise. -->
 
