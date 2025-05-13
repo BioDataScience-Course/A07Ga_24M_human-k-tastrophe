@@ -661,7 +661,7 @@ Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une di
 
 Un test post-hoc à donc été réalisé pour savoir quels groupes diffèrent l'un de l'autre. L'intervalle de confiance des groupe seniors et jeunes adultes ne croisent pas la ligne 0. Cela indique qu'il y a une différence significative entre ces 2 groupes.\
 
-Les différences de masse observées entre jeunes adultes et seniors pourraient refléter une évolution liée à l\'âge, comme une modification de la composition corporelle, du métabolisme ou des habitudes. En revanche, aucune différence n'est détectée entre les autres groupes, ce qui suggère que l'effet observé est spécifiquement observé entre les extrêmes d'âge.
+Les différences de masse observées entre jeunes adultes et seniors pourraient refléter une évolution liée à l'âge, comme une modification de la composition corporelle, du métabolisme ou des habitudes. En revanche, aucune différence n'est détectée entre les autres groupes, ce qui suggère que l'effet observé est spécifiquement observé entre les extrêmes d'âge.
 
 ### ANOVA à un facteur 2
 

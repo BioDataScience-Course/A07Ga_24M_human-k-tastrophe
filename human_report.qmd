@@ -177,12 +177,10 @@ Le dernier graphique explore le lien entre régime alimentaire, genre et taille.
 
 ```{r indice4__Sarah_Delapierre}
 #Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-<<<<<<< HEAD
+
 biometry1 <- biometry %>%
   drop_na()
-=======
-biometry1 <- biometry
->>>>>>> dfb046f43c165bb5d21cde0fd01a8eaf18e5709b
+
 biometry1 %>.%
   sselect(., masse, taille, genre, age_rec, age) %>.%
   smutate(.,
