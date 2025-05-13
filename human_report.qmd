@@ -65,102 +65,67 @@ Les données et les tests statistiques sont réalisés avec le package SciViews 
 biometry <- read("data/biometry.rds")
 ```
 
-### Description par l'étudiant 1
+### Description
 
-```{r description1_Martin_Jadouille}
+```{r description}
+A<-chart(biometry, masse_corr ~ taille %col=% genre) +
+  geom_point() +
+  xlab("Taille(cm)") +
+  ylab("Masse(kg)")+
+  labs(title = "Relation taille/masse")
 
+B<-chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
+geom_point() +
+  ylab("Masse des individus (kg)")+
+  xlab("Taille du tour de hanche (cm)")+
+  labs(title = "Relation taille/tour de hanche")
 
+combine_charts(list(A, B))
+```
+
+```{r description}
+biometry %>.%
+  sgroup_by(., genre) %>.%
+  ssummarise(.,
+    "Moyenne du tour de poignet(cm)" = fmean(tour_poignet),
+    "Moyenne de la taille(cm)" = fmean(taille),
+    "Moyenne du tour de hanche(cm)" = fmean(tour_hanche),
+    "Moyenne de la masse(kg)" = fmean(masse_corr),
+    "Moyenne du tour de taille(cm)" = fmean(tour_taille),
+    "n" = fn(genre))%>.%
+tabularise(.)
+
+biometry <- biometry %>.%
+  smutate(.,IMC = masse_corr / (taille / 100)^2)
+
+biometry %>.%
+  sgroup_by(., genre) %>.%
+  ssummarise(.,
+    "Moyenne de cigarettes" = fmean(fumeur),
+    "moyenne alcool (verres/sem)" = fmean(alcool),
+    "Moyenne des fast-food" = fmean(fast_food),
+    "moyenne d'activités physiques (min)" = fmean(activite_physique),
+    "moyenne de l'IMC" = fmean(IMC),
+    "n" = fn(masse_corr)) ->
+  Moyenne_tab
+tabularise(Moyenne_tab, auto.labs = FALSE)
+```
+
+```{r description}
+chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
+  xlab("Genre") +
+  ylab("Taille (m)") +
+  labs (title = "Taille des individus selon leur genre et leur alimentation")+
+  geom_boxplot()
 ```
 
 $Interprétation$
 
-```{r description2_Martin_Jadouille}
+Nous observons que les hommes ont une masse moyenne supérieure à celle des femmes et que la taille des hommes est également supérieure. Nous observons une corrélation positive entre la masse des individus et leur taille de tour de hanche. Cette visualisation peut nous mettre sur la piste que  les 2 genres n\'ont pas la même forme de corps(Test réalisé par la suite)
 
-```
+Nous pouvons observer dans les 2 tableaux les moyennes de nombreuses variables différenciées par genre. Ces moyennes permettent de visualiser plus rapidement les possibles tendances.
 
-$Interprétation$
-
-### Description par l'étudiant 2
-
-```{r description1_Louise_Dubrecq}
-
-```
-
-$Interprétation$
-
-```{r description2_Louise_Dubrecq}
-
-```
-
-$Interprétation$
-
-### Description par l'étudiant 3
-
-```{r description1_Pierre_Martin}
-
-```
-
-$Interprétation$
-
-```{r description2_Pierre_Martin}
-
-```
-
-$Interprétation$
-
-### Description par l'étudiant 4
-
-```{r description1_Sarah_Delapierre}
-# Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
-biometry$age_rec <- cut(biometry$age,
-  include.lowest = TRUE,
-  right = FALSE,
-  dig.lab = 4,
-  breaks = c(18, 35, 50, 80.2026),
-  labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
-
-# Tableau de contingence
-tab_sex_age <- table(biometry$age_rec, biometry$genre)
-
-# Noms des variables et de leurs niveaux.
-#NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
-
-dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
-names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
-
-
-# Affichage du tableau
-tabularise(tab_sex_age)
-```
-
-$Interprétation$
-
-Dans la population considérée :
-
-Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
-
-Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
-
-Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
-
-Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
-
-```{r description2_Sarah_Delapierre}
-biometry1 <- biometry %>%
-  drop_na() %>%
-  filter(alcool <= 20)  # on garde seulement les valeurs jusqu'à 20 verres/sem
-
-chart(data = biometry1, ~ alcool %fill=% genre | age_rec) + 
-  geom_boxplot() + 
-  labs(title = "Consommation d'alcool en fonction de l'âge et du sexe", y = "Effectifs", x = "Consommation d'alcool [verres/sem]", fill = "Genre")
-
-```
-
-$Interprétation$
-
-On observe que les femmes boivent assez peu, hors valeurs extrêmes.
-
-Chez les hommes, la consommation est plus variable et augmente légèrement chez les seniors.
+Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l\'échantillonnage n'est peut-être pas représentatif de la population globale.
 
 ## Tests d'hypothèses
 
