@@ -296,7 +296,6 @@ $Interprétation$
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-
 Comparaison de la masse par tranche d'âge :
 
 ```{r Anova à 1 facteur}
@@ -333,7 +332,7 @@ summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(
 plot(IMG_posthoc)
 ```
 
-Comparaison de l'influence du rapport taille/hanche sur la masse en fonction du sexe par une anova à 2 facteurs :
+Comparaison de l'influence du type d'obésité sur la masse en fonction du genre :
 
 ```{r Anova à 2 facteurs}
 a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
@@ -365,6 +364,8 @@ oma <- par(oma = c(0, 5.1, 0, 0))
 plot(RTH_testposthoc)
 ```
 
+Influence de l'IMC par le genre :
+
 ```{r Test CHI2}
 imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
 chisq.test(imc_tabcontingence)
@@ -374,12 +375,11 @@ tabularise(imc_tabcontingence)
 
 Les tests d'hypothèses précédents ont pour but de vérifier si des données démographiques influencent la masse. Premièrement, afin d'observer l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisée. Elle permet de conclure qu'il y a une différence significative de masse uniquement entre deux groupes d'âges; les seniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
 
-Egalement, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes (Anova, ddl : 1, Fobs : 60.2, p : 1.57 * 10^(-12)). Ces-dernières ont tendances à avoir une médiane d'indice de masse graisseuse plus haute. 
+Egalement, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes (Anova, ddl : 1, Fobs : 60.2, p : 1.57 \* 10\^(-12)). Ces-dernières ont tendances à avoir une médiane d'indice de masse graisseuse plus haute.
 
 Suite à cela et pour confirmer le graphique en boîte à moustache "rapport taille-hanche en fonction du sexe", nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le type d'obésité sur la masse en fonction du genre. Le test a validé les boites à moustaches avec pour résultat une variation significative entre les genres concernant l'influence du type d'obésité sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)). Le test post-hoc nous permet d'être plus précis : il y a une différence entre les femmes et les hommes normaux, entre les femmes normales et les hommes à obésité androïde et entre les femmes et les hommes à obésité androïde. On observe aussi que les femmes n'ont pas d'obésité gynoïde.
 
 Pour finir, nous avons voulu voir si le genre influençait l'IMC. Le test n'a pas rejeté l'hypothèse de départ et donc nous ne pouvons pas prouver de manière significative qu'il y a une relation entre l'IMC et le genre au seuil alpha de 5% (X-squared = 2.9238, df = 3, p-value = 0.4035).
-
 
 # Discussion et conclusions
 
