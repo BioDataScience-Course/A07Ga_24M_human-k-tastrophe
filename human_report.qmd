@@ -177,6 +177,7 @@ Le dernier graphique explore le lien entre régime alimentaire, genre et taille.
 
 ```{r indice4__Sarah_Delapierre}
 #Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry1 <- biometry
 biometry1 %>.%
 sselect(., masse, taille, genre, age_rec, age) %>.%
 smutate(.,IMC = masse / (taille / 100)^2,
@@ -254,7 +255,7 @@ Avec comme valeur 1 si genre = homme et 0 si genre = femme
 
 $Interprétation$
 
-L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpulence d'un individu : de savoir si il se trouve en sous-poids, à corpulence normale, en surpoids ou en obésité. La mesure de l'IMC ne tient pas en compte du genre de l'individu. Cette variable nous permettra ensuite de pouvoir calculer l'IMG, l'indice de masse grasse, qui lui prendra en compte le genre de l'individu. Cet indice nous donnera la masse grasse d'un individu et par extention sa masse maigre. Le ratio tour taille/tour hanche, quand à lui permettra d'appuyer les données en obtenant plus d'information sur où est répartie la masse grasse.
+L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpulence d'un individu : de savoir si il se trouve en sous-poids, à corpulence normale, en surpoids ou en obésité. La mesure de l'IMC ne tient pas en compte du genre de l'individu. Cette variable nous permettra ensuite de pouvoir calculer l'IMG, l'indice de masse grasse, qui lui prendra en compte le genre de l'individu. Cet indice nous donnera la masse grasse d'un individu et par extension sa masse maigre. Le ratio de tour taille/tour de hanche, quant à lui permettra d'appuyer les données en fournissant plus d'informations sur la répartition de la masse grasse, ce qui permettra ainsi de déduire si le type d'obésité est soit normal, soit androïde soit gynoide.
 
 ## Tests d'hypothèses
 
