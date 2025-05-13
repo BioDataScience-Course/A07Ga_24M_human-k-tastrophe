@@ -843,6 +843,8 @@ plot(RTH_testposthoc)
 
 <!--% Interprétation statistique et biologique -->
 
+Les individus ayant les masses les plus élevés
+
 # Discussion et conclusions
 
 <!--% Reprenez ci-dessous sous forme d'éléments de listes brefs les résultats les plus importants que vous retirez de votre analyse. Ils doivent vous guider pour décider quels tests (les plus intéressants) vous allez conserver dans le rapport. -->
