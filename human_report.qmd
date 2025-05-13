@@ -31,27 +31,31 @@ SciViews::R("infer", "model", lang = "fr")
 
 <!--# Ce projet porte sur la santé humaine liée à l'obésité, à la façon de se nourrir et aux activités réalisées (plus ou moins sédentaire ou actif) ... Réalisez des recherches bibliographiques afin d'avoir une vision précise de la thématique. Existe-t-il des indicateurs calculables pour quantifier l'état de santé d'un individu, par exemple ? Naturellement, ces indicateurs doivent être calculables sur bases des variables mesurées dans votre jeu de données. Focalisez-vous donc sur ces variables-là. -->
 
+En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculables. Ces données ne correspondent pas toujours aux valeurs définies par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique.
+
 En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculable. Ces données ne correspondent pas toujours aux valeurs définis par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique ( problèmes cardiaque, cancers, troubles,\...).
 
 Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un échantillon de la population belge. À l'aide de tests statistiques et de graphiques, nous analyserons les différences et similitudes dans les tendances observées. Cette étude permettra d'évaluer l'état de santé de la population et d'identifier les mesures de prévention nécessaires pour améliorer le bien-être des citoyens belges.
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
-Comment les données anthropométrique de notre échantillon de la population belge et celle obtenus par \@lebacq2015 reflètent elle l'état de santé de la population?
+1\) Comment les données anthropométrique de notre échantillon de la population belge et celles obtenues par \@lebacq2015 reflètent elle l'état de santé de la population?
+
+2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l'état de santé de la population belge ?
 
 # Matériel et méthodes
 
 <!--% Cette section doit comprendre une explication technique sur les mesures effectuées et sur le protocole relatif à l'acquisition des données en 3 à 4 paragraphes. Vous ajouterez aussi un paragraphe qui détaille les outils logiciels et statistiques utilisés (logiciels et versions des logiciels). Un simple copier-coller du matériel et méthodes du bloc-notes ne sera PAS considéré comme acceptable. -->
 
-Dans le cadre de ce travail, les données ont été collectées fin 2024 par une classe de 36 élèves. Chaque élèves a dû mesurés 4 personnes( aléatoire, famille, amis,\...) pour un total de 144 personnes. Les variables à mesurer ont été définies collectivement avant le début des relevées pour une parfaite compréhension entre tout les élèves. ces variables ont été listées dans un dictionnaires de données. Celui-ci permet une uniformisations des relevées pour les unités, le noms des variables,\...
+Dans le cadre de ce travail, les données ont été collectées fin 2024 par une classe de 36 élèves. Chaque élève a dû mesurer 4 personnes (aléatoire, famille, amis,\...) pour un total de 144 personnes. Les variables à mesurer ont été définies collectivement avant le début des relevés pour une parfaite compréhension entre tous les élèves. Ces variables ont été listées dans un dictionnaire de données. Celui-ci permet une uniformisation des relevés pour les unités, le nom des variables,\...
 
-De plus, pour limiter les erreurs de mesures sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
+De plus, pour limiter les erreurs de mesure sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
-Nous avons également du suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tout les volontaires sont donc sous la forme d'un identifiant.
+1\) Nous avons également dû suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tous les volontaires sont donc sous la forme d'un identifiant.
 
-Les données et les tests statistiques sont réalisés avec le package SciViews Box 2024 en utilisant le système d'exploitation linux avec le le logiciel R en version 4.3.0 version string.
+2\) Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
 
-# Résultats
+Les données et les tests statistiques sont réalisés avec le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow" et un système d'exploitation Linux 64 bits, avec une architecture x86_64.
 
 # Résultats
 
@@ -67,18 +71,54 @@ biometry <- read("data/biometry.rds")
 
 ### Description
 
+```{r description age et sexe}
+
+# Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
+biometry$age_rec <- cut(biometry$age,
+  include.lowest = TRUE,
+  right = FALSE,
+  dig.lab = 4,
+  breaks = c(18, 35, 50, 80.2026),
+  labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
+
+# Tableau de contingence
+tab_sex_age <- table(biometry$age_rec, biometry$genre)
+
+# Noms des variables et de leurs niveaux.
+#NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
+
+dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
+names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
+
+
+# Affichage du tableau
+tabularise(tab_sex_age)
+```
+
+$Interprétation$
+
+Dans la population considérée :
+
+Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
+
+Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
+
+Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+
+Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
+
 ```{r description}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
   geom_point() +
   xlab("Taille(cm)") +
   ylab("Masse(kg)")+
-  labs(title = "Relation taille/masse")
+  labs(title = "Relation taille/masse", col = "Genre")
 
 B<-chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
 geom_point() +
   ylab("Masse des individus (kg)")+
   xlab("Taille du tour de hanche (cm)")+
-  labs(title = "Relation taille/tour de hanche")
+  labs(title = "Relation taille/tour de hanche", col = "Genre")
 
 combine_charts(list(A, B))
 ```
@@ -92,8 +132,9 @@ biometry %>.%
     "Moyenne du tour de hanche(cm)" = fmean(tour_hanche),
     "Moyenne de la masse(kg)" = fmean(masse_corr),
     "Moyenne du tour de taille(cm)" = fmean(tour_taille),
-    "n" = fn(genre))%>.%
-tabularise(.)
+    "n" = fn(genre))->Moyenne_tab_mesure
+colnames(Moyenne_tab_mesure)[1] <- "Genre"
+tabularise(Moyenne_tab_mesure)
 
 biometry <- biometry %>.%
   smutate(.,IMC = masse_corr / (taille / 100)^2)
@@ -107,8 +148,15 @@ biometry %>.%
     "Moyenne d'activités physiques (min)" = fmean(activite_physique),
     "Moyenne de l'IMC" = fmean(IMC),
     "n" = fn(masse_corr)) ->
-  Moyenne_tab
-tabularise(Moyenne_tab, auto.labs = FALSE)
+  Moyenne_tab_act
+
+colnames(Moyenne_tab_act) <- c("Genre", "Moyenne de cigarettes", "Moyenne alcool (verres/sem)", 
+                       "Moyenne des fast-food", "Moyenne activité physique (min)", "Moyenne de l'IMC", "n")
+
+tabularise(Moyenne_tab_act, auto.labs = FALSE)
+
+
+
 ```
 
 ```{r description}
@@ -121,9 +169,15 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 
 $Interprétation$
 
-Nous observons que les hommes ont une masse moyenne supérieure à celle des femmes et que la taille des hommes est également supérieure. Nous observons une corrélation positive entre la masse des individus et leur taille de tour de hanche. Cette visualisation peut nous mettre sur la piste que  les 2 genres n'ont pas la même forme de corps(Test réalisé par la suite)
+Le **graphique 1** met en évidence deux tendances principales : les hommes sont globalement plus grands et plus lourds que les femmes, et une **relation positive** est visible entre la **masse** des individus et leur **taille ou tour de hanche**, tous genres confondus. Cette corrélation visuelle suggère que **la morphologie diffère entre les genres**, hypothèse explorée plus rigoureusement par un test statistique ultérieur.
 
-Nous pouvons observer dans les 2 tableaux les moyennes de nombreuses variables différenciées par genre. Ces moyennes permettent de visualiser plus rapidement les possibles tendances.
+Les **tableaux** viennent préciser et compléter cette première observation. Sur le plan **morphologique**, les hommes présentent des valeurs moyennes plus élevées en taille, masse, tour de taille et tour de poignet, tandis que les femmes ont un tour de hanche plus développé, ce qui confirme une différence de silhouette.
+
+Concernant les **habitudes de vie**, les hommes se distinguent par une activité physique plus importante, une consommation plus fréquente d\'alcool et de fast-food. À l\'inverse, les femmes déclarent fumer davantage. Malgré ces différences de comportement, l\'**IMC moyen** reste similaire entre les deux groupes (autour de 25), suggérant des styles de vie compensés d\'une certaine manière.
+
+En croisant ces éléments visuels et numériques, on observe donc des **différences claires entre les genres**, tant sur le **plan corporel** que **comportemental**, avec une certaine cohérence entre les sources d\'information.
+
+Boite à moustache
 
 Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
 
@@ -256,24 +310,6 @@ $Interprétation$
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-Comparaison de l'influence du rapport taille/hanche sur la masse en fonction du sexe par une anova à 2 facteurs :
-
-```{r Anova à 2 facteurs}
-#Anova
-biometry1$RTH <- as.factor(biometry1$RTH)
-biometry1$sucre<- as.factor(biometry1$genre)
-biometry1$RTH_genre <- interaction(biometry1$RTH, biometry1$genre)
-
-anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_genre)) %>.%
-tabularise(.)
-
-#Test Posthoc
-summary(RTH_testposthoc <- confint(multcomp::glht(RTH_anova2,
-  linfct = multcomp::mcp(RTH_genre = "Tukey"))))
-oma <- par(oma = c(0, 5.1, 0, 0))
-plot(RTH_testposthoc)
-```
-
 Comparaison de la masse par tranche d'âge :
 
 ```{r Anova à 1 facteur}
@@ -296,7 +332,7 @@ rm(oma)
 
 Comparaison de l'indice de masse grasse par genre :
 
-```{r Indice de masse grasse en fonction du genre}
+```{r Anova à un facteur}
 IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
 anova(IMG_anova)|> tabularise()
 
@@ -310,9 +346,54 @@ summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(
 plot(IMG_posthoc)
 ```
 
-Nous avons voulu vérifier si des données démographiques influençaient la masse. Premièrement, dans le but de savoir l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisé. Il y a une différence significative de masse uniquement entre deux groupes d'âges; les séniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+Comparaison de l'influence du type d'obésité sur la masse en fonction du genre :
 
-Aussi, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes. Ces-dernières ont tendance à avoir un plus haut indice en moyenne. Suite à cela et pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les genres concernant l'effet du rapport taille hanche sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)).
+```{r Anova à 2 facteurs}
+a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "Masse des femmes",
+       x = "Type d'obésité",
+       y = "Masse (kg)")
+
+b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(title = "Masse des hommes",
+       x = "Type d'obésité",
+       y = "Masse (kg)")
+
+combine_charts(list(a, b))
+
+#Anova
+biometry1$RTH <- as.factor(biometry1$RTH)
+biometry1$sucre<- as.factor(biometry1$genre)
+biometry1$RTH_genre <- interaction(biometry1$RTH, biometry1$genre)
+
+anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_genre)) %>.%
+tabularise(.)
+
+#Test Posthoc
+summary(RTH_testposthoc <- confint(multcomp::glht(RTH_anova2,
+  linfct = multcomp::mcp(RTH_genre = "Tukey"))))
+oma <- par(oma = c(0, 5.1, 0, 0))
+plot(RTH_testposthoc)
+```
+
+Influence de l'IMC par le genre :
+
+```{r Test CHI2}
+imc_tabcontingence <- table(biometry_imc$genre, biometry_imc$IMC)
+chisq.test(imc_tabcontingence)
+
+tabularise(imc_tabcontingence)
+```
+
+Les tests d'hypothèses précédents ont pour but de vérifier si des données démographiques influencent la masse. Premièrement, afin d'observer l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisée. Elle permet de conclure qu'il y a une différence significative de masse uniquement entre deux groupes d'âges; les seniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+
+Egalement, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes (Anova, ddl : 1, Fobs : 60.2, p : 1.57 \* 10\^(-12)). Ces-dernières ont tendances à avoir une médiane d'indice de masse graisseuse plus haute.
+
+Suite à cela et pour confirmer le graphique en boîte à moustache "rapport taille-hanche en fonction du sexe", nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le type d'obésité sur la masse en fonction du genre. Le test a validé les boites à moustaches avec pour résultat une variation significative entre les genres concernant l'influence du type d'obésité sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)). Le test post-hoc nous permet d'être plus précis : il y a une différence entre les femmes et les hommes normaux, entre les femmes normales et les hommes à obésité androïde et entre les femmes et les hommes à obésité androïde. On observe aussi que les femmes n'ont pas d'obésité gynoïde.
+
+Pour finir, nous avons voulu voir si le genre influençait l'IMC. Le test n'a pas rejeté l'hypothèse de départ et donc nous ne pouvons pas prouver de manière significative qu'il y a une relation entre l'IMC et le genre au seuil alpha de 5% (X-squared = 2.9238, df = 3, p-value = 0.4035).
 
 # Discussion et conclusions
 
