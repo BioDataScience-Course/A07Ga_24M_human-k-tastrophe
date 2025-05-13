@@ -690,7 +690,7 @@ chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
   ylab("Indice de masse grasse")
 ```
 
-<!--% Hypothèse nulle et alternative -->
+!\--% Hypothèse nulle et alternative \--\>
 
 $H_0 : \mu_{\text{IMG}_1} = \mu_{\text{IMG}_2} = \dots = \mu_{\text{IMG}_k}$
 
@@ -713,6 +713,10 @@ plot(IMG_posthoc)
 ```
 
 <!--% Interprétation statistique et biologique -->
+
+Selon l'anova, il y a une différence très significative de l'indice de masse graisseuse entre les femmes et les hommes (Anova un facteur, ddl : 1, Fobs : 60.2, p : 1.57 \* 10\^(-12)).
+
+Le test post hoc confirme également la conclusion de l'anova (les intervalles de confiance ne passant pas par zéro).
 
 <!--# Travaillez jusqu'ici pour le module 9. Commencez à rédiger la partie résultats avec la description des données. -->
 
@@ -856,6 +860,10 @@ plot(RTH_testposthoc)
 -   ...
 
 -   ...
+
+-   Le test de CHI2 a pour résultat qu'on ne peut pas affirmer significativement qu\'il n\'y a pas de relation entre le rapport taille hanche et la consommation de sucre.
+
+-   En conclusion de l'ANOVA à deux facteurs, le rapport taille hanche influence différemment de manière significative la masse selon le genre.
 
 <!--# Important : ce document doit compiler SANS ERREURS avec le bouton 'Rendu' sinon le travail sera sanctionné lourdement. La compilation du document Quarto est maintenant considérée comme acquise. -->
 
