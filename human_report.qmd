@@ -31,27 +31,31 @@ SciViews::R("infer", "model", lang = "fr")
 
 <!--# Ce projet porte sur la santé humaine liée à l'obésité, à la façon de se nourrir et aux activités réalisées (plus ou moins sédentaire ou actif) ... Réalisez des recherches bibliographiques afin d'avoir une vision précise de la thématique. Existe-t-il des indicateurs calculables pour quantifier l'état de santé d'un individu, par exemple ? Naturellement, ces indicateurs doivent être calculables sur bases des variables mesurées dans votre jeu de données. Focalisez-vous donc sur ces variables-là. -->
 
+En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculables. Ces données ne correspondent pas toujours aux valeurs définies par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique.
+
 En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculable. Ces données ne correspondent pas toujours aux valeurs définis par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique ( problèmes cardiaque, cancers, troubles,\...).
 
 Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un échantillon de la population belge. À l'aide de tests statistiques et de graphiques, nous analyserons les différences et similitudes dans les tendances observées. Cette étude permettra d'évaluer l'état de santé de la population et d'identifier les mesures de prévention nécessaires pour améliorer le bien-être des citoyens belges.
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
-Comment les données anthropométrique de notre échantillon de la population belge et celle obtenus par \@lebacq2015 reflètent elle l'état de santé de la population?
+1\) Comment les données anthropométrique de notre échantillon de la population belge et celles obtenues par \@lebacq2015 reflètent elle l'état de santé de la population?
+
+2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l'état de santé de la population belge ?
 
 # Matériel et méthodes
 
 <!--% Cette section doit comprendre une explication technique sur les mesures effectuées et sur le protocole relatif à l'acquisition des données en 3 à 4 paragraphes. Vous ajouterez aussi un paragraphe qui détaille les outils logiciels et statistiques utilisés (logiciels et versions des logiciels). Un simple copier-coller du matériel et méthodes du bloc-notes ne sera PAS considéré comme acceptable. -->
 
-Dans le cadre de ce travail, les données ont été collectées fin 2024 par une classe de 36 élèves. Chaque élèves a dû mesurés 4 personnes( aléatoire, famille, amis,\...) pour un total de 144 personnes. Les variables à mesurer ont été définies collectivement avant le début des relevées pour une parfaite compréhension entre tout les élèves. ces variables ont été listées dans un dictionnaires de données. Celui-ci permet une uniformisations des relevées pour les unités, le noms des variables,\...
+Dans le cadre de ce travail, les données ont été collectées fin 2024 par une classe de 36 élèves. Chaque élève a dû mesurer 4 personnes (aléatoire, famille, amis,\...) pour un total de 144 personnes. Les variables à mesurer ont été définies collectivement avant le début des relevés pour une parfaite compréhension entre tous les élèves. Ces variables ont été listées dans un dictionnaire de données. Celui-ci permet une uniformisation des relevés pour les unités, le nom des variables,\...
 
-De plus, pour limiter les erreurs de mesures sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
+De plus, pour limiter les erreurs de mesure sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
-Nous avons également du suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tout les volontaires sont donc sous la forme d'un identifiant.
+1\) Nous avons également dû suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tous les volontaires sont donc sous la forme d'un identifiant.
 
-Les données et les tests statistiques sont réalisés avec le package SciViews Box 2024 en utilisant le système d'exploitation linux avec le le logiciel R en version 4.3.0 version string.
+2\) Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
 
-# Résultats
+Les données et les tests statistiques sont réalisés avec le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow" et un système d'exploitation Linux 64 bits, avec une architecture x86_64.
 
 # Résultats
 
@@ -67,18 +71,54 @@ biometry <- read("data/biometry.rds")
 
 ### Description
 
+```{r description age et sexe}
+
+# Découpage en classe : différentes tranches d'age (18-35, 35-50, 50>=)
+biometry$age_rec <- cut(biometry$age,
+  include.lowest = TRUE,
+  right = FALSE,
+  dig.lab = 4,
+  breaks = c(18, 35, 50, 80.2026),
+  labels = c("Jeunes adultes", "Adultes matures", "Seniors"))
+
+# Tableau de contingence
+tab_sex_age <- table(biometry$age_rec, biometry$genre)
+
+# Noms des variables et de leurs niveaux.
+#NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
+
+dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
+names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
+
+
+# Affichage du tableau
+tabularise(tab_sex_age)
+```
+
+$Interprétation$
+
+Dans la population considérée :
+
+Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
+
+Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
+
+Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+
+Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
+
 ```{r description}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
   geom_point() +
   xlab("Taille(cm)") +
   ylab("Masse(kg)")+
-  labs(title = "Relation taille/masse")
+  labs(title = "Relation taille/masse", col = "Genre")
 
 B<-chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
 geom_point() +
   ylab("Masse des individus (kg)")+
   xlab("Taille du tour de hanche (cm)")+
-  labs(title = "Relation taille/tour de hanche")
+  labs(title = "Relation taille/tour de hanche", col = "Genre")
 
 combine_charts(list(A, B))
 ```
@@ -277,7 +317,7 @@ par(oma)
 rm(oma)
 ```
 
-Comparaison de l'indice de masse grasse par genre : 
+Comparaison de l'indice de masse grasse par genre :
 
 ```{r Anova à un facteur}
 IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
