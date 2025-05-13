@@ -367,19 +367,20 @@ chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| aliment
 <!--% Description et formule ci-dessous. -->
 
 ```{r indice4}
-#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
 biometry1 %>.%
-sselect(., masse, taille, genre, age_rec, age) %>.%
-smutate(.,IMC = masse / (taille / 100)^2,
-IMC = case_when(
-IMC < 18.5 ~ "Carence pondérale",
-IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
-IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
-IMC >= 30 ~ "Obésité")) -> biometry_imc
-biometry_imc
-biometry_imc$IMC <- as.factor(biometry_imc$IMC)
+  sselect(., masse, taille, genre, age_rec, age) %>.%
+  smutate(.,
+    IMC = masse / (taille / 100)^2,
+    IMC_cat = case_when(
+      IMC < 18.5 ~ "Carence pondérale",
+      IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
+      IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
+      IMC >= 30 ~ "Obésité")
+  ) -> biometry_imc
 
-tabularise$headtail(biometry_imc) 
+biometry_imc$IMC_cat <- as.factor(biometry_imc$IMC_cat)
+
+
 ```
 
 L'indice de masse corporelle (IMC) est calculé par la formule suivante :
@@ -403,7 +404,7 @@ Chez les enfants et adolescents, des seuils spécifiques à l'âge et au sexe, d
 ```{r plot_indice4}
 #Graphique ou tableau utilisant l'indice calculé.
 #1
-chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
+chart(biometry_imc, ~ IMC_cat %fill=% age_rec |genre) +
 geom_bar() +
 coord_flip() +
 labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age") + 
@@ -442,7 +443,7 @@ chisq.test(imc_tabcontingence)
 
 $H_0 : IMC_{\text{hommes}} = IMC_{\text{femmes}}$
 
-\$ H_1 : IMC\_{\text{hommes}} \neq IMC\_{\text{femmes}} \$
+$H_1 : IMC_{\text{hommes}} \neq IMC_{\text{femmes}}$
 
 <!--% Vérification des conditions d'application -->
 
@@ -452,9 +453,11 @@ tabularise(imc_tabcontingence)
 
 <!--% Interprétation statistique et biologique -->
 
-Statistique : P-valeur \> 0.05, on ne peut donc pas rejeter H0 au seuil alpha de 5 % (X-squared = 2.9238, df = 3, p-value = 0.4035)
+**Statistique :** P-valeur \> 0.05, on ne peut donc pas rejeter H0 au seuil alpha de 5 % (X-squared = 2.8243, df = 3, p-value = 0.4195)
 
-Biologique : Nous ne pouvons pas prouver de manière significative qu'il y a une relation entre le sexe et l'IMC au seuil alpha de 5%.
+**Biologique :** Nous ne pouvons pas prouver de manière significative qu'il y a une relation entre le genre et l'IMC au seuil alpha de 5%.
+
+**Conditions d'application :** Pour les hommes en carence pondérale, les effectifs sont \< 5 mais les test sera tout de même "approximativement bon.
 
 ### Test de Chi^2^ 2
 
@@ -531,7 +534,7 @@ car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
 
 $Interprétation$
 
-Nous pouvons rejeter H0 au seuil alpha de 5%, il y a donc une différence significative entre la taille des hommes et celle des femmes (Student t test, t = 12.366, df = 138, p-value = 2.2e\^-16)
+Nous pouvons rejeter H0 au seuil alpha de 5%, il y a donc une différence significative entre la taille des hommes et celle des femmes (Student t test, t = 11.8966, df = 141, p-value 2.2e\^-16)
 
 ### Test t de Student 2
 
@@ -595,23 +598,20 @@ car::qqPlot(biometry[["Indice_de_masse_grasse"]], distribution = "norm",
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova1_1}
-#NB : obtenir des valeurs suppl sans savoir à quoi cela se rapporte = présence de valeurs manquantes. (→sdrop.na())
+#NB : obtenir des valeurs suppl sans savoir à quoi cela se rapporte = présence de valeurs manquantes. (→sdrop.na() ou )
 biometry1 %>.%
 sgroup_by(., age_rec) %>.%
 ssummarise(.,
-"Moyenne de la masse (kg)" = fmean(masse),
-"Médiane de la masse" = fsd(masse),
-"n" = fnobs(masse)) ->
-Masse_tab
-names(Masse_tab)[1] <- "Classe d'âge"
-tabularise(Masse_tab, auto.labs = FALSE)
+"Moyenne IMC" = fmean(IMC)) ->     imc_tab
+names(imc_tab)[1] <- "Classe d'âge"
+tabularise(imc_tab, auto.labs = FALSE)
 
 
-chart(data = biometry_imc, masse ~ age_rec) +
+chart(data = biometry_imc[!is.na(biometry_imc$age_rec), ], IMC ~ age_rec) +
   geom_boxplot() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary( geom = "point", fun = "mean" , color = "red") +  
-  labs(title = "Moyennes de poids par tranche d'âge", y = "Masse", x = "Tranche d'âge") 
+  labs(title = "IMC par tranche d'âge", y = "IMC", x = "Tranche d'âge") 
 
 ```
 
@@ -624,23 +624,23 @@ $H_1 : \exists \ (i, j) \quad \text{tel que} \quad \mu_{\text{poids}_i} \neq \mu
 <!--% Vérification des conditions d'application -->
 
 ```{r cond1_test_anova1_1}
-bartlett.test(data = biometry1, masse ~ age_rec)
+bartlett.test(data = biometry1, IMC ~ age_rec)
 ```
 
 ```{r test_anova1_1}
-anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
+anova(anova_IMC <- lm(data = biometry1, IMC ~ age_rec))|> tabularise()
 
 ```
 
 ```{r cond2_test_anova1_1}
-chart$qqplot(anova_masse)
+chart$qqplot(anova_IMC)
 ```
 
 ```{r Test_post_hoc}
-summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
+summary(IMC_posthoc <- confint(multcomp::glht(anova_IMC,
   linfct = multcomp::mcp(age_rec = "Tukey"))))
 oma <- par(oma = c(0, 5.1, 0, 0))
-plot(masse_posthoc)
+plot(IMC_posthoc)
 par(oma)
 rm(oma)
 
@@ -651,15 +651,17 @@ rm(oma)
 
 **Conditions d'application**
 
-Nous observons que les residus suivent une distribution normale a l'exception des extrême.
+Nous observons que les résidus suivent une distribution normale a l'exception des extrêmes.
 
 Le test de Bartlett nous montre qu'il y a bien homoscédasticité car p-value \> 0.05.
 
 **ANOVA et post-hoc**
 
-Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence significative entre au moins 2 groupes au seuil alpha de 5% (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+Après avoir réalisé l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence significative entre au moins 2 groupes au seuil alpha de 5% (ANOVA, F = 13.2, ddl = 2& 134, valeur p = 5.92\*10-0.6.)
 
-Un test post-hoc à donc été réaliser pour savoir quels groupes diffèrent l'un de l'autre. Lintervalle de confiance des groupe séniors et jeunes adultes ne croisent pas la ligne 0. Cela indique qu'il y a une différence significative entre ces 2 groupes.
+Un test post-hoc à donc été réalisé pour savoir quels groupes diffèrent l'un de l'autre. L'intervalle de confiance des groupe seniors et jeunes adultes ne croisent pas la ligne 0. Cela indique qu'il y a une différence significative entre ces 2 groupes.\
+
+Les différences de masse observées entre jeunes adultes et seniors pourraient refléter une évolution liée à l\'âge, comme une modification de la composition corporelle, du métabolisme ou des habitudes. En revanche, aucune différence n'est détectée entre les autres groupes, ce qui suggère que l'effet observé est spécifiquement observé entre les extrêmes d'âge.
 
 ### ANOVA à un facteur 2
 
@@ -756,6 +758,7 @@ H₁ : Il y a une interaction significative entre l'alimentation et le genre sur
 ```{r test_anova2_1}
 chart$qqplot(bio_anova)
 
+bartlett.test(data = biometry, IMC ~ interaction(genre, ali_sans_veg))
 bartlett.test(data = biometry, log(IMC) ~ interaction(genre, ali_sans_veg))
 
 sselect(biometry,genre,sucre)%>.%
@@ -784,7 +787,7 @@ Aucun effet d'interaction significatif n'a été observé entre le genre et le t
 
 Les résidus suivent bien une distribution presque normale mais l'ANOVA est relativement robuste à des petits écarts à la normalité.
 
-Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 13.908, df = 4, p-value = 0.007596). Les variances ne sont pas égales, une transformation des données par log donne p = 0.02814 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
+Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 9.7707, df = 3, p-value = 0.006335). Les variances ne sont pas égales, une transformation des données par log donne p = 0.02062 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
 
 ### ANOVA à deux facteurs 2
 
@@ -860,7 +863,11 @@ Il y a donc homoscédasticité, une anova est donc possible.
 
 -   Il y a une différence très significative de l'indice de masse graisseuse entre les femmes et les hommes.
 
--   En réponse à l'ANOVA à un facteur, nous pouvons dire qu'il y a une différence de masse significative entre au moins 2 groupes d'âges au seuil alpha de 5% , les séniors et les jeunes adultes.
+-   Le test t de student 1 nous confirme qu'il y a une différence significative de taille entre les genres.
+
+-   L'ANOVA à un facteur, nous indique qu'il y a une différence d'IMC significative entre 2 groupes d'âge au seuil alpha de 5%, les seniors et les jeunes adultes. Cela pourrait s'expliquer par une différence de composition corporelle, d'habitude de vie et/ou de métabolisme.
+
+-   L'ANOVA à deux facteurs 1 confirme les résultats du chi2 1, les résultats convergent pour indiquer l'absence de lien significatif entre genre, type d'alimentation et IMC. Toutefois, l'hétéroscédasticité constatée remet en cause la fiabilité de l'ANOVA classique. Une analyse alternative (ANOVA de Welch ou test non paramétrique) serait préférable pour confirmer ces résultats.
 
 -   Le test de CHI2 a pour résultat qu'on ne peut pas affirmer significativement qu'il n'y a pas de relation entre le rapport taille hanche et la consommation de sucre.
 

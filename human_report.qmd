@@ -180,17 +180,17 @@ Le dernier graphique explore le lien entre régime alimentaire, genre et taille.
 biometry1 <- biometry %>%
   drop_na()
 biometry1 %>.%
-sselect(., masse, taille, genre, age_rec, age) %>.%
-smutate(.,IMC = masse / (taille / 100)^2,
-IMC = case_when(
-IMC < 18.5 ~ "Carence pondérale",
-IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
-IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
-IMC >= 30 ~ "Obésité")) -> biometry_imc
-biometry_imc
-biometry_imc$IMC <- as.factor(biometry_imc$IMC)
+  sselect(., masse, taille, genre, age_rec, age) %>.%
+  smutate(.,
+    IMC = masse / (taille / 100)^2,
+    IMC_cat = case_when(
+      IMC < 18.5 ~ "Carence pondérale",
+      IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
+      IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
+      IMC >= 30 ~ "Obésité")
+  ) -> biometry_imc
 
-tabularise$headtail(biometry_imc) 
+biometry_imc$IMC_cat <- as.factor(biometry_imc$IMC_cat)
 ```
 
 La formule pour calculer cet indice est:
@@ -265,19 +265,27 @@ L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpule
 Comparaison de la masse par tranche d'âge :
 
 ```{r Anova à 1 facteur}
-anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
+#NB : obtenir des valeurs suppl sans savoir à quoi cela se rapporte = présence de valeurs manquantes. (→sdrop.na() ou )
+biometry1 %>.%
+sgroup_by(., age_rec) %>.%
+ssummarise(.,
+"Moyenne IMC" = fmean(IMC)) ->     imc_tab
+names(imc_tab)[1] <- "Classe d'âge"
+tabularise(imc_tab, auto.labs = FALSE)
 
 
-chart(data = biometry_imc, masse ~ age_rec) +
+chart(data = biometry_imc[!is.na(biometry_imc$age_rec), ], IMC ~ age_rec) +
   geom_boxplot() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary( geom = "point", fun = "mean" , color = "red") +  
-  labs(title = "Moyennes de poids par tranche d'âge", y = "Masse", x = "Tranche d'âge") 
+  labs(title = "IMC par tranche d'âge", y = "IMC", x = "Tranche d'âge") 
 
-summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
+anova(anova_IMC <- lm(data = biometry1, IMC ~ age_rec))|> tabularise()
+
+summary(IMC_posthoc <- confint(multcomp::glht(anova_IMC,
   linfct = multcomp::mcp(age_rec = "Tukey"))))
 oma <- par(oma = c(0, 5.1, 0, 0))
-plot(masse_posthoc)
+plot(IMC_posthoc)
 par(oma)
 rm(oma)
 ```
