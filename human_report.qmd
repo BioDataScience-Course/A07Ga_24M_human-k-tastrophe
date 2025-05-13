@@ -1,5 +1,5 @@
 ---
-title: "Lien entre la santé et données anthropométriques dans un échantillon"
+title: "Lien entre la santé et données anthropométriques d'un échantillon"
 author: "MartinJadouille, LouiseDubrecq, PierreMartin, SarahDelapierre"
 date: "`r Sys.Date()`"
 format:
@@ -48,6 +48,10 @@ Dans le cadre de ce travail, les données ont été collectées fin 2024 par une
 De plus, pour limiter les erreurs de mesures sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
 Nous avons également du suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tout les volontaires sont donc sous la forme d'un identifiant.
+
+Les données et les tests statistiques sont réalisés avec le package SciViews Box 2024 en utilisant le système d'exploitation linux avec le le logiciel R en version 4.3.0 version string.
+
+# Résultats
 
 # Résultats
 
