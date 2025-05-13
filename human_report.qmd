@@ -175,46 +175,25 @@ Le dernier graphique explore le lien entre régime alimentaire, genre et taille.
 
 ### Indice 1
 
-```{r indice1_Martin_Jadouille}
-# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-biometry <- biometry %>.%
-  smutate(.,group_age = cut(age, 
-    breaks = c(-Inf,17,25, 64, Inf), 
-    labels = c("Moins de 18 ans","18-25", "26-64","65+"),right = TRUE))
+```{r indice4__Sarah_Delapierre}
+#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry1 %>.%
+sselect(., masse, taille, genre, age_rec, age) %>.%
+smutate(.,IMC = masse / (taille / 100)^2,
+IMC = case_when(
+IMC < 18.5 ~ "Carence pondérale",
+IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
+IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
+IMC >= 30 ~ "Obésité")) -> biometry_imc
+biometry_imc
+biometry_imc$IMC <- as.factor(biometry_imc$IMC)
 
- biometry <- biometry %>.%
-  smutate(.,sommeil_optimal = case_when(
-    group_age == "Moins de 18 ans"~9,
-    group_age == "18-25" ~8,
-    group_age =="26-64"~7.5,
-    group_age == "65+" ~7.5
-  ))
-
-biometry <- biometry %>.%
-  smutate(.,dette_sommeil = sommeil_optimal - sommeil)
+tabularise$headtail(biometry_imc) 
 ```
 
 La formule pour calculer cet indice est:
 
-$\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
-
-Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
-
-```{r plot_indice1_Martin_Jadouille}
- biometry <- biometry %>.%
-  smutate(.,IMC = masse_corr / (taille / 100)^2)  
-  chart(biometry,dette_sommeil ~ IMC | group_age ) +
-  geom_boxplot()+
-    geom_jitter(alpha = 0.3, width = 0.2, height = 0, color = "blue")
-```
-
-$Interprétation$
-
--   Une grande partie des individus sont en manque de sommeil.
-
--   Plus on vieillit, plus la dette de sommeil diminue.
-
--   On ne remarque pas de tendance particulière et encore moins celle attendue. Normalement, les personnes ayant une dette de sommeil ont un IMC plus élevé
+$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
 
 ### Indice 2
 
@@ -240,29 +219,6 @@ $$
 RTH = \frac{\text{Tour de taille (cm)}}{\text{Tour de hanche (cm)}}
 $$
 
-```{r plot_indice1_Louise_Dubrecq}
-a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
-  geom_boxplot(show.legend = FALSE) +
-  labs(title = "Masse des femmes",
-       x = "Type d'obésité",
-       y = "Masse (kg)") 
-  
-
-b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"] %col=% RTH[genre == "H"]) +
-  geom_boxplot(show.legend = FALSE) +
-  labs(title = "Masse des hommes",
-       x = "Type d'obésité",
-       y = "Masse (kg)")
-
-
-
-combine_charts(list(a, b))
-```
-
-$Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
-
-$Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
-
 ### Indice 3
 
 ```{r indice1__Pierre_Martin}
@@ -284,87 +240,21 @@ La formule pour calculer cet indice est:
 
 Pour les femmes
 
-\$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4 \$
+$$ {IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4 $$
 
 Pour les hommes
 
-\$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2) \$
+$$ {IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2) $$
 
 Formule utilisée fusionnant les 2 formules
 
-\$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4 \$
+$$ {IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4 $$
 
 Avec comme valeur 1 si genre = homme et 0 si genre = femme
 
-```{r plot_indice1__Pierre_Martin}
-# Graphique ou tableau utilisant l'indice calculé.
-chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| alimentation)+
-  geom_boxplot()
-```
-
 $Interprétation$
 
--   Les femmes on en moyenne un IMG plus élevé que les hommes peu importe le régime alimentaire. (pas d'homme pour régime végétarien donc comparaison non possible)
-
--   Deux valeurs extrêmes sont observées pour les hommes entre 18 et 25 ans ayant un régime omnivore.
-
--   On observe que peu importe le régime alimentaire et le genre, quand l'âge augmente l'indice de masse grasse augmente lui aussi.
-
--   Chez les omnivores la distributions des individus est plus grande chez les femmes dans un même groupe d'âge.
-
-### Indice 4
-
-```{r indice4__Sarah_Delapierre}
-#Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-biometry1 %>.%
-sselect(., masse, taille, genre, age_rec, age) %>.%
-smutate(.,IMC = masse / (taille / 100)^2,
-IMC = case_when(
-IMC < 18.5 ~ "Carence pondérale",
-IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
-IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
-IMC >= 30 ~ "Obésité")) -> biometry_imc
-biometry_imc
-biometry_imc$IMC <- as.factor(biometry_imc$IMC)
-
-tabularise$headtail(biometry_imc) 
-```
-
-La formule pour calculer cet indice est:
-
-$IMC = \frac{\text{Poids} \ (\text{g})}{\text{Taille}^2 \ (\text{m}^2)}$
-
-L'IMC est une norme internationale de référence permettant de mesurer l'excès de poids et l'obésité. Il évalue les risques pour la santé qui leurs sont associés. Chez les adultes, des seuils internationalement reconnus permettent de classer les individus selon leur statut pondéral :
-
--   IMC \< 18,5 : insuffisance pondérale
-
--   18,5 ≤ IMC \< 25 : poids normal
-
--   25 ≤ IMC \< 30 : surpoids
-
--   IMC ≥ 30 : obésité
-
-Chez les enfants et adolescents, des seuils spécifiques à l'âge et au sexe, définis par l'International Obesity Task Force (IOTF), sont utilisés pour assurer la comparabilité internationale.
-
-```{r plot_indice4_sarah_delapierre}
-#1
-chart(biometry_imc, ~ IMC %fill=% age_rec |genre) +
-geom_bar() +
-coord_flip() +
-labs(title = "IMC en fonction du sexe et de la tranche d'age", y = "Effectifs", x = "IMC", fill = "Classe d'age") + 
-  geom_hline(yintercept = 10, color = "red") + 
-  geom_hline(yintercept = 20, color = "red")
-```
-
-$Interprétation$
-
--   Il y a plus de femmes en carence pondérale que d'hommes.
-
--   La majorité de la population est en surcharge pondérale ou de corpulence normale.
-
--   Les jeunes adultes dominent la plupart des catégories ce qui est logique car ils sont majoritaires (64.1%) et sont, pour la plupart de corpulence normale ou en surchage pondérale.
-
--   Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surcharge pondérale ou obèses. Cette observation, combinée au fait que les femmes sont majoritaires dans cette tranche d'âge, pourrait indiquer une tendance à la prise de poids avec l'âge, surtout chez les femmes. Chez les adultes matures, on note également une proportion plus élevée de femmes obèses que d'hommes. Toutefois, ces individus ne constituent que 16,2 % de l'échantillon, ce qui limite la portée des conclusions possibles.
+L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpulence d'un individu : de savoir si il se trouve en sous-poids, à corpulence normale, en surpoids ou en obésité. La mesure de l'IMC ne tient pas en compte du genre de l'individu. Cette variable nous permettra ensuite de pouvoir calculer l'IMG, l'indice de masse grasse, qui lui prendra en compte le genre de l'individu. Cet indice nous donnera la masse grasse d'un individu et par extention sa masse maigre. Le ratio tour taille/tour hanche, quand à lui permettra d'appuyer les données en obtenant plus d'information sur où est répartie la masse grasse.
 
 ## Tests d'hypothèses
 
