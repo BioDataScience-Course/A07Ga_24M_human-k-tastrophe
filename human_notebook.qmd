@@ -705,6 +705,10 @@ plot(IMG_posthoc)
 
 <!--% Interprétation statistique et biologique -->
 
+Selon l'anova, il y a une différence très significative de l'indice de masse graisseuse entre les femmes et les hommes (Anova un facteur, ddl : 1, Fobs : 60.2, p : 1.57 \* 10\^(-12)).
+
+Le test post hoc confirme également la conclusion de l'anova (les intervalles de confiance ne passant pas par zéro).
+
 <!--# Travaillez jusqu'ici pour le module 9. Commencez à rédiger la partie résultats avec la description des données. -->
 
 ### ANOVA à deux facteurs 1
