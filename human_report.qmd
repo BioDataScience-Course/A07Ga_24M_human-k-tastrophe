@@ -174,16 +174,45 @@ Le dernier graphique, nous montre la dispersion des individus en fonction du ré
 ### Indice 1
 
 ```{r indice1_Martin_Jadouille}
+# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry <- biometry %>.%
+  smutate(.,group_age = cut(age, 
+    breaks = c(-Inf,17,25, 64, Inf), 
+    labels = c("Moins de 18 ans","18-25", "26-64","65+"),right = TRUE))
 
+ biometry <- biometry %>.%
+  smutate(.,sommeil_optimal = case_when(
+    group_age == "Moins de 18 ans"~9,
+    group_age == "18-25" ~8,
+    group_age =="26-64"~7.5,
+    group_age == "65+" ~7.5
+  ))
+
+biometry <- biometry %>.%
+  smutate(.,dette_sommeil = sommeil_optimal - sommeil)
 ```
 
 La formule pour calculer cet indice est:
 
-```{r plot_indice1_Martin_Jadouille}
+$\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
 
+Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
+
+```{r plot_indice1_Martin_Jadouille}
+ biometry <- biometry %>.%
+  smutate(.,IMC = masse_corr / (taille / 100)^2)  
+  chart(biometry,dette_sommeil ~ IMC | group_age ) +
+  geom_boxplot()+
+    geom_jitter(alpha = 0.3, width = 0.2, height = 0, color = "blue")
 ```
 
 $Interprétation$
+
+-   Une grande partie des individus sont en manque de sommeil.
+
+-   Plus on vieillit, plus la dette de sommeil diminue.
+
+-   On ne remarque pas de tendance particulière et encore moins celle attendue. Normalement, les personnes ayant une dette de sommeil ont un IMC plus élevé
 
 ### Indice 2
 
@@ -232,13 +261,56 @@ $Interprétation$ - L'obésité androïde est plus fréquente chez les hommes qu
 
 ```{r indice1__Pierre_Martin}
 
+# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+
+#IMG=(1.51×IMC)+(0.70× age)−(3.6×sexe)−1.4
+
+biometry <- biometry %>.%
+  smutate(., 
+    genre_img = ifelse(genre == "H", 1, 0),
+    Indice_de_masse_grasse = ((1.2 * IMC) + (0.23 * age) - (10.8 * genre_img) - 5.4))
+
+tabularise$headtail(biometry) 
+
 ```
 
 La formule pour calculer cet indice est:
 
-```{r plot_indice1__Pierre_Martin}
+Pour les femmes
 
+$
+\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4
+$
+
+Pour les hommes
+
+$
+\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2)
+$
+
+Formule utilisée fusionnant les 2 formules
+
+$
+\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4
+$
+
+Avec comme valeur 1 si genre = homme et 0 si genre = femme
+
+```{r plot_indice1__Pierre_Martin}
+# Graphique ou tableau utilisant l'indice calculé.
+chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| alimentation)+
+  geom_boxplot()
 ```
+
+$Interprétation$
+
+-   Les femmes on en moyenne un IMG plus élevé que les hommes peu importe le régime alimentaire. (pas d'homme pour régime végétarien donc comparaison non possible)
+
+-   Deux valeurs extrêmes sont observées pour les hommes entre 18 et 25 ans ayant un régime omnivore.
+
+-   On observe que peu importe le régime alimentaire et le genre, quand l'âge augmente l'indice de masse grasse augmente lui aussi.
+
+-   Chez les omnivores la distributions des individus est plus grande chez les femmes dans un même groupe d'âge.
 
 ### Indice 4
 
