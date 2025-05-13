@@ -108,35 +108,38 @@ combine_charts(list(A, B))
 ```
 
 ```{r description 3}
+# Création de la variable IMC
+biometry <- biometry %>.%
+  smutate(., IMC = masse_corr / (taille / 100)^2)
+
+# Tableau des moyennes des mesures anthropométriques par genre
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
-    "Moyenne du tour de poignet(cm)" = fmean(tour_poignet),
-    "Moyenne de la taille(cm)" = fmean(taille),
-    "Moyenne du tour de hanche(cm)" = fmean(tour_hanche),
-    "Moyenne de la masse(kg)" = fmean(masse_corr),
-    "Moyenne du tour de taille(cm)" = fmean(tour_taille),
-    "n" = fn(genre))->Moyenne_tab_mesure
+    "Moyenne du tour de poignet (cm)" = fmean(tour_poignet),
+    "Moyenne de la taille (cm)" = fmean(taille),
+    "Moyenne du tour de hanche (cm)" = fmean(tour_hanche),
+    "Moyenne de la masse (kg)" = fmean(masse_corr),
+    "Moyenne du tour de taille (cm)" = fmean(tour_taille),
+    "n" = fn(genre)
+  ) -> Moyenne_tab_mesure
+
 colnames(Moyenne_tab_mesure)[1] <- "Genre"
 tabularise(Moyenne_tab_mesure)
 
-biometry <- biometry %>.%
-  smutate(.,IMC = masse_corr / (taille / 100)^2)
-
+# Tableau des moyennes des comportements liés à la santé + IMC
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
     "Moyenne de cigarettes" = fmean(fumeur),
     "Moyenne alcool (verres/sem)" = fmean(alcool),
     "Moyenne des fast-food" = fmean(fast_food),
-    "Moyenne d'activités physiques (min)" = fmean(activite_physique),
+    "Moyenne activité physique (min)" = fmean(activite_physique),
     "Moyenne de l'IMC" = fmean(IMC),
-    "n" = fn(masse_corr)) ->
-  Moyenne_tab_act
+    "n" = fn(masse_corr)
+  ) -> Moyenne_tab_act
 
-colnames(Moyenne_tab_act) <- c("Genre", "Moyenne de cigarettes", "Moyenne alcool (verres/sem)", 
-                       "Moyenne des fast-food", "Moyenne activité physique (min)", "Moyenne de l'IMC", "n")
-
+colnames(Moyenne_tab_act)[1] <- "Genre"
 tabularise(Moyenne_tab_act, auto.labs = FALSE)
 
 
@@ -354,7 +357,7 @@ tabularise(imc_tabcontingence)
 
 Les tests d'hypothèses réalisés avaient pour objectif d'évaluer l'influence de variables anthropométriques sur l'état de santé de la population belge. Nous nous sommes principalement concentrés sur la masse graisseuse, l'IMC, et le RTH.
 
-Dans un premier temps, une ANOVA à un facteur a été réalisée pour évaluer l'effet de l'âge sur l'IMC. Les résultats montrent une différence significative entre les groupes d'âge (F = 13.4, ddl = 2 & 137, p = 4.97 × 10⁻⁶), en particulier entre les seniors et les jeunes adultes. Cette différence pourrait être liée à des variations de métabolisme, d'habitudes de vie ou de composition corporelle au fil du vieillissement. Cela signifie que l'âge semble avoir un effet mesurable sur l'IMC, notamment entre les plus jeunes et les plus âgés.
+Dans un premier temps, une ANOVA à un facteur a été réalisée pour évaluer l'effet de l'âge sur l'IMC. Les résultats montrent une différence significative entre les groupes d'âge (F = 13.4, ddl = 2 & 137, p = 3.71 × 10⁻⁶), en particulier entre les seniors et les jeunes adultes. Cette différence pourrait être liée à des variations de métabolisme, d'habitudes de vie ou de composition corporelle au fil du vieillissement. Cela signifie que l'âge semble avoir un effet mesurable sur l'IMC, notamment entre les plus jeunes et les plus âgés.
 
 On observe également une proportion plus élevée de femmes en carence pondérale. La majorité de la population présente une corpulence normale ou une surcharge pondérale, avec une forte représentation des jeunes adultes. Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surpoids ou obèses, ce qui suggère une tendance à la prise de poids avec l'âge. Cette tendance est aussi visible chez les adultes matures, bien que leur faible effectif limite la portée des conclusions. (voir tableau de description)
 
