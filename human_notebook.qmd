@@ -332,21 +332,15 @@ L'IMG a comme formule :
 
 Pour les femmes
 
-$
-\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4
-$
+$$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4 $$
 
 Pour les hommes
 
-$
-\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2)
-$
+$$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2) $$
 
 Formule utilisée fusionnant les 2 formules
 
-$
-\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4
-$
+$$ \text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4 $$
 
 Avec comme valeur 1 si genre = homme et 0 si genre = femme
 
