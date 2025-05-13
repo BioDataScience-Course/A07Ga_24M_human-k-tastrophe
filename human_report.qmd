@@ -340,6 +340,8 @@ par(oma)
 rm(oma)
 ```
 
+Comparaison de l'indice de masse grasse par genre : 
+
 ```{r Indice de masse grasse en fonction du genre}
 IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
 anova(IMG_anova)|> tabularise()
