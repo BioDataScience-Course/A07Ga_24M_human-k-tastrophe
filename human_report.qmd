@@ -31,20 +31,17 @@ SciViews::R("infer", "model", lang = "fr")
 
 <!--# Ce projet porte sur la santé humaine liée à l'obésité, à la façon de se nourrir et aux activités réalisées (plus ou moins sédentaire ou actif) ... Réalisez des recherches bibliographiques afin d'avoir une vision précise de la thématique. Existe-t-il des indicateurs calculables pour quantifier l'état de santé d'un individu, par exemple ? Naturellement, ces indicateurs doivent être calculables sur bases des variables mesurées dans votre jeu de données. Focalisez-vous donc sur ces variables-là. -->
 
-<<<<<<< HEAD
 En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculables. Ces données ne correspondent pas toujours aux valeurs définies par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique.
-
 
 En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculable. Ces données ne correspondent pas toujours aux valeurs définis par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique ( problèmes cardiaque, cancers, troubles,\...).
 
 Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un échantillon de la population belge. À l'aide de tests statistiques et de graphiques, nous analyserons les différences et similitudes dans les tendances observées. Cette étude permettra d'évaluer l'état de santé de la population et d'identifier les mesures de prévention nécessaires pour améliorer le bien-être des citoyens belges.
 
-
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
 1\) Comment les données anthropométrique de notre échantillon de la population belge et celles obtenues par \@lebacq2015 reflètent elle l'état de santé de la population?
 
-2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l\'état de santé de la population belge ?
+2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l'état de santé de la population belge ?
 
 # Matériel et méthodes
 
@@ -56,7 +53,7 @@ De plus, pour limiter les erreurs de mesure sur la masse nous avons réalisé un
 
 1\) Nous avons également dû suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tous les volontaires sont donc sous la forme d'un identifiant.
 
-2\) Nous avons également dû respecter strictement la règle de l\'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
+2\) Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
 
 Les données et les tests statistiques sont réalisés avec le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow" et un système d'exploitation Linux 64 bits, avec une architecture x86_64.
 
@@ -98,7 +95,6 @@ names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
 tabularise(tab_sex_age)
 ```
 
-
 $Interprétation$
 
 Dans la population considérée :
@@ -110,8 +106,6 @@ Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à
 Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
 
 Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
-
-
 
 ```{r description}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
@@ -340,7 +334,7 @@ par(oma)
 rm(oma)
 ```
 
-Comparaison de l'indice de masse grasse par genre : 
+Comparaison de l'indice de masse grasse par genre :
 
 ```{r Indice de masse grasse en fonction du genre}
 IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
