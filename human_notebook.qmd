@@ -766,11 +766,11 @@ sselect(biometry,genre,sucre)%>.%
 
 **Statistique :** Dans les 3 tests réalisés, p \> 0.05, on ne peut donc pas rejeter H0 au seuil alpha de 5%.
 
-Effet du genre: ANOVA à 2 facteurs 1, Ddl = 1, Fobs = 0.111, p = 0.739
+Effet du genre: ANOVA à 2 facteurs 1, Ddl = 1, Fobs = 0.0238, p = 0.878
 
-Effet de l'alimentation: ANOVA à 2 facteurs 1, Ddl = 2, Fobs = 1.378, p = 0.255
+Effet de l'alimentation: ANOVA à 2 facteurs 1, Ddl = 2, Fobs = 1.0259, p = 0.313
 
-Test sur l'intéraction genre et alimentation : ANOVA à 2 facteurs 1, Ddl = 1, Fobs = 0.953, valeur de p = 0.331.
+Test sur l'intéraction genre et alimentation : ANOVA à 2 facteurs 1, Ddl = 1, Fobs = 0.9415, valeur de p = 0.334.
 
 **Biologique :**
 

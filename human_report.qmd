@@ -177,6 +177,8 @@ Le dernier graphique explore le lien entre régime alimentaire, genre et taille.
 
 ```{r indice4__Sarah_Delapierre}
 #Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry1 <- biometry %>%
+  drop_na()
 biometry1 %>.%
 sselect(., masse, taille, genre, age_rec, age) %>.%
 smutate(.,IMC = masse / (taille / 100)^2,
