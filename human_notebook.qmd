@@ -716,7 +716,21 @@ Le test post hoc confirme également la conclusion de l'anova (les intervalles d
 <!--% Graphique ou tableau présentant les données par rapport au test à réaliser. -->
 
 ```{r plot_anova2_1}
-anova(bio_anova<-lm(data = biometry, IMC ~ genre * alimentation))%>.%
+
+biometry <- biometry %>%
+  sfilter(alimentation != "végétarien") %>%
+  smutate(ali_sans_veg= alimentation)
+biometry <- biometry %>%
+  sfilter(ali_sans_veg != "végétarien") %>%
+  smutate(ali_sans_veg = fct_drop(ali_sans_veg))
+biometry%>.%
+  sgroup_by(.,ali_sans_veg, genre) %>%              # Ensuite grouper
+  ssummarise(IMC_mean = mean(IMC, na.rm = TRUE)) %>%
+  chart(IMC_mean ~ genre %col=% ali_sans_veg ) +
+  geom_line(aes(group = ali_sans_veg)) +
+  geom_point()
+
+anova(bio_anova<-lm(data = biometry, IMC ~ genre * ali_sans_veg))%>.%
     tabularise(.)
 
 ```
@@ -732,10 +746,10 @@ H₁ : Il y a une interaction significative entre l'alimentation et le genre sur
 ```{r test_anova2_1}
 chart$qqplot(bio_anova)
 
-bartlett.test(data = biometry, IMC ~ interaction(genre, alimentation))
+bartlett.test(data = biometry, log(IMC) ~ interaction(genre, ali_sans_veg))
 
 sselect(biometry,genre,sucre)%>.%
-  table(biometry$genre, biometry$alimentation)
+  table(biometry$genre, biometry$ali_sans_veg)
 ```
 
 <!--% Interprétation statistique et biologique -->
@@ -760,7 +774,7 @@ Aucun effet d'interaction significatif n'a été observé entre le genre et le t
 
 Les résidus suivent bien une distribution presque normale mais l'ANOVA est relativement robuste à des petits écarts à la normalité.
 
-Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 13.908, df = 4, p-value = 0.007596). Les variances ne sont pas égales, un transformation des données par log donne p = 0.02814 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
+Le test de Bartlett indique une valeur de p \< 0.05, il y a donc hétéroscédasticité. (Bartlett's K-squared = 13.908, df = 4, p-value = 0.007596). Les variances ne sont pas égales, une transformation des données par log donne p = 0.02814 (toujours hétéroscédasticité), il faudrait donc envisager une version non paramétrique de l'ANOVA.
 
 ### ANOVA à deux facteurs 2
 
