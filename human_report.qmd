@@ -31,9 +31,15 @@ SciViews::R("infer", "model", lang = "fr")
 
 <!--# Ce projet porte sur la santé humaine liée à l'obésité, à la façon de se nourrir et aux activités réalisées (plus ou moins sédentaire ou actif) ... Réalisez des recherches bibliographiques afin d'avoir une vision précise de la thématique. Existe-t-il des indicateurs calculables pour quantifier l'état de santé d'un individu, par exemple ? Naturellement, ces indicateurs doivent être calculables sur bases des variables mesurées dans votre jeu de données. Focalisez-vous donc sur ces variables-là. -->
 
+<<<<<<< HEAD
 En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculables. Ces données ne correspondent pas toujours aux valeurs définies par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique.
 
 Notre travail vise à comparer les résultats obtenus par @lebacq2015 avec un échantillon de la population belge. À l'aide de tests statistiques et de graphiques, nous analyserons les différences et similitudes dans les tendances observées. Cette étude permettra d'évaluer l'état de santé de la population et d'identifier les mesures de prévention nécessaires pour améliorer le bien-être des citoyens belges.
+=======
+En Belgique, la santé de la population est un sujet de préoccupation, en particulier en ce qui concerne les indicateurs anthropométriques tels que l'indice de masse corporelle (IMC), le tour de taille, l'activité physique et certains ratios/indices calculable. Ces données ne correspondent pas toujours aux valeurs définis par l'Organisation mondiale de la santé (OMS). En effet, la Belgique connaît une augmentation des problèmes de surpoids et d'obésité, des facteurs ayant des impacts considérables sur la santé publique ( problèmes cardiaque, cancers, troubles,\...).
+
+Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un échantillon de la population belge. À l'aide de tests statistiques et de graphiques, nous analyserons les différences et similitudes dans les tendances observées. Cette étude permettra d'évaluer l'état de santé de la population et d'identifier les mesures de prévention nécessaires pour améliorer le bien-être des citoyens belges.
+>>>>>>> b4c58436cae3468ac224829c7601a750e06790da
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
@@ -168,9 +174,7 @@ Nous pouvons observer dans les 2 tableaux les moyennes de nombreuses variables d
 
 Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
 
-## Tests d'hypothèses
-
-<!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
+## Indices de santé
 
 ### Indice 1
 
@@ -204,7 +208,7 @@ $Interprétation$
     ratio_taille_hanche >= 0.95 ~ "androïde")))
 ```
 
-La formule pour calculer cet indice est:
+La formule pour calculer cet indice est: tour de taille / tour de hanche.
 
 ```{r plot_indice1_Louise_Dubrecq}
 a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
@@ -224,6 +228,8 @@ b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"]
 
 combine_charts(list(a, b))
 ```
+
+$Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
 
 $Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
 
@@ -297,7 +303,9 @@ $Interprétation$
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-```{r LouiseDubrecq}
+Comparaison de l'influence du rapport taille/hanche sur la masse en fonction du sexe par une anova à 2 facteurs :
+
+```{r Anova à 2 facteurs}
 #Anova
 biometry1$RTH <- as.factor(biometry1$RTH)
 biometry1$sucre<- as.factor(biometry1$genre)
@@ -313,19 +321,49 @@ oma <- par(oma = c(0, 5.1, 0, 0))
 plot(RTH_testposthoc)
 ```
 
-A ajouter ; Aussi, pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les sexes concernant l'effet du rapport taille hanche sur la masse.
+Comparaison de la masse par tranche d'âge :
+
+```{r Anova à 1 facteur}
+anova(anova_masse <- lm(data = biometry1, masse ~ age_rec))|> tabularise()
+
+
+chart(data = biometry_imc, masse ~ age_rec) +
+  geom_boxplot() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary( geom = "point", fun = "mean" , color = "red") +  
+  labs(title = "Moyennes de poids par tranche d'âge", y = "Masse", x = "Tranche d'âge") 
+
+summary(masse_posthoc <- confint(multcomp::glht(anova_masse,
+  linfct = multcomp::mcp(age_rec = "Tukey"))))
+oma <- par(oma = c(0, 5.1, 0, 0))
+plot(masse_posthoc)
+par(oma)
+rm(oma)
+```
+
+```{r Indice de masse grasse en fonction du genre}
+IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
+anova(IMG_anova)|> tabularise()
+
+chart(data = biometry, Indice_de_masse_grasse  ~ genre ) +
+  geom_boxplot() +
+  geom_jitter(width = 0.05, alpha = 0.5) +
+  stat_summary(geom = "point", fun = "mean", color = "red", size = 3) +
+  ylab("Indice de masse grasse")
+
+summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(genre = "Tukey"))))
+plot(IMG_posthoc)
+```
+
+Nous avons voulu vérifier si des données démographiques influençaient la masse. Premièrement, dans le but de savoir l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisé. Il y a une différence significative de masse uniquement entre deux groupes d'âges; les séniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+
+Aussi, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes. Ces-dernières ont tendance à avoir un plus haut indice en moyenne. Suite à cela et pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les genres concernant l'effet du rapport taille hanche sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)).
 
 # Discussion et conclusions
 
 <!--% Reprenez les résultats obtenus, discutez-les d'un point de vue biologique en 4 à 5 paragraphes et concluez votre travail. Vous pouvez les mettre également en relation avec vos recherches bibliographiques dans cette section. -->
 
 ...Vos conclusions ici... Du point de vue des différences hommes-femmes, on peut remarquer directement des différences de masse, de taille et de pratique d'activités physiques. Pour analyser plus en profondeur ce sujet, nous avons comparé le rapport taille hanche des différents genres en les liants à des types d'obésités. Nous avons également réalisé une Anova pour observer l'influence du rapport taille hanche sur la masse en fonction du sexe. Les résultats nous montrent une différence significative entre les hommes et les femmes concernant l'influence du rapport taille hanche sur la masse. Egalement, le graphique de l'indice 2 nous montre visuellement ce phénomène. On observe que l'obésité androïde est plus fréquente chez les hommes que chez les femmes. Aucune femme de notre échantillon n'est en obésité gynoïde, certainement du à leurs morphologie la plus commune en forme de type "poire" qui accepte une plus large gamme de rapport taille hanche sans que cela soit du à une obésité.
-
--   L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre.
--   Variabilité importante des masses en obésité androïde.
--   Il n'y a pas d'obesité gynoïde chez les femmes.
--   Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde"
--   La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
 
 <!--# Important : ce document doit compiler SANS ERREURS avec le bouton 'Rendu' sinon le travail sera sanctionné lourdement. La compilation du document Quarto est maintenant considérée comme acquise. -->
 
