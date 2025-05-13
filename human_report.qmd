@@ -84,7 +84,7 @@ tab_sex_age <- table(biometry$age_rec, biometry$genre)
 #NB : names(dimnames() renome le nom de la variable tandis que dimnames() renomme ses niveaux.
 
 dimnames(tab_sex_age) <- list(c("Jeunes adultes", "Adultes matures", "Seniors"), c("Homme", "Femme"))
-names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
+names(dimnames(tab_sex_age)) <- c("Tranche_d_âge", "Genre")
 
 
 # Affichage du tableau
@@ -147,21 +147,29 @@ tabularise(Moyenne_tab_act, auto.labs = FALSE)
 chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
   xlab("Genre") +
   ylab("Taille (m)") +
-  labs (title = "Taille des individus selon leur genre et leur alimentation")+
+  labs(title = "Taille des individus selon leur genre et leur alimentation") +
   geom_boxplot()
+
+biometry %>.%
+sselect(biometry,genre, alimentation) %>.%
+table(biometry$genre, biometry$alimentation) -> regime_tab
+dimnames(regime_tab) <- list(Genre = c("Femme", "Homme"),
+Alimentation = c("Omnivore", "Carnivore", "Végétarien"))
+names(dimnames(regime_tab)) <- c( "Genre", "Régime_alimentaire")
+  tabularise(regime_tab)
 ```
 
 $Interprétation$
 
-L\'échantillon analysé est composé majoritairement de jeunes adultes (64,1 %), avec une répartition équilibrée entre hommes et femmes dans cette tranche d\'âge. Les adultes matures représentent 16,2 % de la population, dont 60 % sont des femmes, tandis que les seniors constituent 19,7 %, avec une proportion féminine de 60,7 %. Ces déséquilibres de genre dans les tranches d\'âge les plus élevées devront être pris en compte dans l\'interprétation des résultats, notamment lorsqu\'il s\'agit d\'analyser les effets de l\'âge ou du sexe.
+L'échantillon analysé est composé majoritairement de jeunes adultes (64,1 %), avec une répartition équilibrée entre hommes et femmes dans cette tranche d'âge. Les adultes matures représentent 16,2 % de la population, dont 60 % sont des femmes, tandis que les seniors constituent 19,7 %, avec une proportion féminine de 60,7 %. Ces déséquilibres de genre dans les tranches d'âge les plus élevées devront être pris en compte dans l'interprétation des résultats, notamment lorsqu'il s'agit d'analyser les effets de l'âge ou du sexe.
 
-Le premier graphique met en évidence une relation positive entre la taille et la masse corporelle, quel que soit le genre. Il illustre également que les hommes sont en moyenne plus grands et plus lourds que les femmes. On y remarque une variation dans la forme de la courbe selon le sexe, ce qui suggère des morphologies différentes entre hommes et femmes -- une hypothèse explorée plus précisément dans la suite de l\'analyse.
+Le premier graphique met en évidence une relation positive entre la taille et la masse corporelle, quel que soit le genre. Il illustre également que les hommes sont en moyenne plus grands et plus lourds que les femmes. On y remarque une variation dans la forme de la courbe selon le sexe, ce qui suggère des morphologies différentes entre hommes et femmes -- une hypothèse explorée plus précisément dans la suite de l'analyse.
 
-Les tableaux de synthèse viennent appuyer ces observations en détaillant les différences morphologiques et comportementales entre les genres. Les hommes présentent une taille, une masse, un tour de poignet et un tour de taille moyens supérieurs à ceux des femmes, tandis que les femmes ont un tour de hanche plus élevé. Ces différences confortent l\'idée de profils corporels distincts.
+Les tableaux de synthèse viennent appuyer ces observations en détaillant les différences morphologiques et comportementales entre les genres. Les hommes présentent une taille, une masse, un tour de poignet et un tour de taille moyens supérieurs à ceux des femmes, tandis que les femmes ont un tour de hanche plus élevé. Ces différences confortent l'idée de profils corporels distincts.
 
-Sur le plan des comportements liés à la santé, les femmes déclarent fumer davantage, mais les hommes consomment plus d\'alcool, fréquentent plus les fast-foods et pratiquent davantage d\'activité physique. Malgré ces divergences, l\'IMC moyen est similaire dans les deux groupes, légèrement au-dessus de 25, suggérant un niveau comparable de surcharge pondérale.
+Sur le plan des comportements liés à la santé, les femmes déclarent fumer davantage, mais les hommes consomment plus d'alcool, fréquentent plus les fast-foods et pratiquent davantage d'activité physique. Malgré ces divergences, l'IMC moyen est similaire dans les deux groupes, légèrement au-dessus de 25, suggérant un niveau comparable de surcharge pondérale.
 
-Le dernier graphique explore le lien entre régime alimentaire, genre et taille. On y confirme que les hommes sont plus grands que les femmes, tous régimes confondus. Chez les hommes, la taille médiane varie peu entre omnivores et carnivores. Chez les femmes, les végétariennes semblent légèrement plus grandes que les carnivores, avec une taille comparable aux omnivores. Toutefois, les effectifs très faibles dans les groupes carnivore et végétarien, ainsi que des données manquantes chez les hommes, limitent fortement l'interprétation de ces résultats. On ne peut, à ce stade, tirer aucune conclusion solide sur l\'effet du régime alimentaire sur la taille.
+Le dernier graphique explore le lien entre régime alimentaire, genre et taille. On y confirme que les hommes sont plus grands que les femmes, tous régimes confondus. Chez les hommes, la taille médiane varie peu entre omnivores et carnivores. Chez les femmes, les végétariennes semblent légèrement plus grandes que les carnivores, avec une taille comparable aux omnivores. Toutefois, les effectifs très faibles dans les groupes carnivore et végétarien, ainsi que des données manquantes chez les hommes, limitent fortement l'interprétation de ces résultats. On ne peut, à ce stade, tirer aucune conclusion solide sur l'effet du régime alimentaire sur la taille.
 
 ## Indices de santé
 
@@ -226,7 +234,11 @@ $Interprétation$
     ratio_taille_hanche >= 0.95 ~ "androïde")))
 ```
 
-La formule pour calculer cet indice est: tour de taille / tour de hanche.
+La formule pour calculer cet indice est :
+
+$$
+RTH = \frac{\text{Tour de taille (cm)}}{\text{Tour de hanche (cm)}}
+$$
 
 ```{r plot_indice1_Louise_Dubrecq}
 a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
