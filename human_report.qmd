@@ -177,12 +177,9 @@ Le dernier graphique explore le lien entre régime alimentaire, genre et taille.
 
 ```{r indice4__Sarah_Delapierre}
 #Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
-<<<<<<< HEAD
 biometry1 <- biometry %>%
   drop_na()
-=======
-biometry1 <- biometry
->>>>>>> dfb046f43c165bb5d21cde0fd01a8eaf18e5709b
+
 biometry1 %>.%
   sselect(., masse, taille, genre, age_rec, age) %>.%
   smutate(.,
@@ -192,9 +189,9 @@ biometry1 %>.%
       IMC >= 18.5 & IMC < 25 ~ "Corpulence normale",
       IMC >= 25 & IMC < 30 ~ "Surcharge pondérale",
       IMC >= 30 ~ "Obésité")
-  ) -> biometry_imc
+  ) -> biometry1
 
-biometry_imc$IMC_cat <- as.factor(biometry_imc$IMC_cat)
+biometry1$IMC_cat <- as.factor(biometry1$IMC_cat)
 ```
 
 La formule pour calculer cet indice est:
@@ -260,11 +257,13 @@ Avec comme valeur 1 si genre = homme et 0 si genre = femme
 
 $Interprétation$
 
-L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpulence d'un individu : de savoir si il se trouve en sous-poids, à corpulence normale, en surpoids ou en obésité. La mesure de l'IMC ne tient pas en compte du genre de l'individu. Cette variable nous permettra ensuite de pouvoir calculer l'IMG, l'indice de masse grasse, qui lui prendra en compte le genre de l'individu. Cet indice nous donnera la masse grasse d'un individu et par extension sa masse maigre. Le ratio de tour taille/tour de hanche, quant à lui permettra d'appuyer les données en fournissant plus d'informations sur la répartition de la masse grasse, ce qui permettra ainsi de déduire si le type d'obésité est soit normal, soit androïde soit gynoide.
+L'IMC, indice de masse corporelle, nous permet de déterminer le type de corpulence d'un individu : de savoir s'il se trouve en sous-poids, à corpulence normale, en surpoids ou en obésité. La mesure de l'IMC ne tient pas en compte du genre de l'individu. Cette variable nous permettra ensuite de pouvoir calculer l'IMG, l'indice de masse grasse, qui lui prendra en compte le genre de l'individu. Cet indice nous donnera la masse grasse d'un individu et par extension sa masse maigre. Le ratio de tour taille/tour de hanche, quant à lui permettra d'appuyer les données en fournissant plus d'informations sur la répartition de la masse grasse, ce qui permettra ainsi de déduire si le type d'obésité est soit normal, soit androïde soit gynoïde.
 
 ## Tests d'hypothèses
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
+
+nb : indices placés dans la partie description.
 
 Comparaison de la masse par tranche d'âge :
 
@@ -278,7 +277,7 @@ names(imc_tab)[1] <- "Classe d'âge"
 tabularise(imc_tab, auto.labs = FALSE)
 
 
-chart(data = biometry_imc[!is.na(biometry_imc$age_rec), ], IMC ~ age_rec) +
+chart(data = biometry_imc[!is.na(biometry_imc$age_rec), ], IMC ~ age_rec |genre) +
   geom_boxplot() +
   geom_jitter(width = 0.05, alpha = 0.5) +
   stat_summary( geom = "point", fun = "mean" , color = "red") +  
@@ -351,21 +350,33 @@ chisq.test(imc_tabcontingence)
 tabularise(imc_tabcontingence)
 ```
 
-Les tests d'hypothèses précédents ont pour but de vérifier si des données démographiques influencent la masse. Premièrement, afin d'observer l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisée. Elle permet de conclure qu'il y a une différence significative de masse uniquement entre deux groupes d'âges; les seniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
+Les tests d'hypothèses réalisés avaient pour objectif d\'évaluer l\'influence de variables anthropométriques sur l'état de santé de la population belge. Nous nous sommes principalement concentrés sur la masse graisseuse, l'IMC, et le RTH.
 
-Egalement, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes (Anova, ddl : 1, Fobs : 60.2, p : 1.57 \* 10\^(-12)). Ces-dernières ont tendances à avoir une médiane d'indice de masse graisseuse plus haute.
+Dans un premier temps, une ANOVA à un facteur a été réalisée pour évaluer l\'effet de l\'âge sur l\'IMC. Les résultats montrent une différence significative entre les groupes d\'âge (F = 13.4, ddl = 2 & 137, p = 4.97 × 10⁻⁶), en particulier entre les seniors et les jeunes adultes. Cette différence pourrait être liée à des variations de métabolisme, d\'habitudes de vie ou de composition corporelle au fil du vieillissement. Cela signifie que l\'âge semble avoir un effet mesurable sur l\'IMC, notamment entre les plus jeunes et les plus âgés.
 
-Suite à cela et pour confirmer le graphique en boîte à moustache "rapport taille-hanche en fonction du sexe", nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le type d'obésité sur la masse en fonction du genre. Le test a validé les boites à moustaches avec pour résultat une variation significative entre les genres concernant l'influence du type d'obésité sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)). Le test post-hoc nous permet d'être plus précis : il y a une différence entre les femmes et les hommes normaux, entre les femmes normales et les hommes à obésité androïde et entre les femmes et les hommes à obésité androïde. On observe aussi que les femmes n'ont pas d'obésité gynoïde.
+On observe également une proportion plus élevée de femmes en carence pondérale. La majorité de la population présente une corpulence normale ou une surcharge pondérale, avec une forte représentation des jeunes adultes. Les seniors, en particulier les femmes, sont surreprésentés parmi les personnes en surpoids ou obèses, ce qui suggère une tendance à la prise de poids avec l'âge. Cette tendance est aussi visible chez les adultes matures, bien que leur faible effectif limite la portée des conclusions. (voir tableau de description)
 
-Pour finir, nous avons voulu voir si le genre influençait l'IMC. Le test n'a pas rejeté l'hypothèse de départ et donc nous ne pouvons pas prouver de manière significative qu'il y a une relation entre l'IMC et le genre au seuil alpha de 5% (X-squared = 2.9238, df = 3, p-value = 0.4035).
+Concernant le genre, une ANOVA a également mis en évidence une différence significative d\'indice de masse grasse (IMG) entre hommes et femmes (F = 60.2, ddl = 1, p = 1.57 × 10⁻¹²). Les femmes présentent, en moyenne, un IMG plus élevé que les hommes, ce qui est cohérent avec les différences biologiques connues entre les sexes en matière de répartition des tissus graisseux. Autrement dit, les femmes ont en général un pourcentage de masse grasse plus élevé que les hommes.
+
+Afin de mieux comprendre l\'interaction entre le genre et le type d\'obésité sur la masse corporelle, une ANOVA à deux facteurs a été menée. Ce test a confirmé une variation significative (F = 13.1, ddl = 4, p = 4.46 × 10⁻⁹). Les résultats post-hoc ont révélé des différences notables entre les femmes et les hommes présentant une obésité androïde, entre les femmes normales et les hommes à obésité androïde, ainsi qu\'entre les femmes et les hommes de corpulence normale. Il est également intéressant de noter que, dans cet échantillon, aucune femme ne présente d\'obésité gynoïde. Cela suggère que la relation entre le type d\'obésité et la masse n\'est pas la même chez les hommes et les femmes.
+
+Enfin, un test du khi² a été réalisé pour évaluer l\'existence d\'un lien entre le genre et l\'IMC. Ce test n\'a pas permis de rejeter l\'hypothèse nulle (χ² = 2.92, ddl = 3, p = 0.4035), ce qui signifie qu\'aucune relation significative n\'a pu être démontrée entre ces deux variables au seuil de 5 %. En clair, on ne peut pas affirmer que le sexe a un effet direct sur l\'IMC dans cette population.
 
 # Discussion et conclusions
 
 <!--% Reprenez les résultats obtenus, discutez-les d'un point de vue biologique en 4 à 5 paragraphes et concluez votre travail. Vous pouvez les mettre également en relation avec vos recherches bibliographiques dans cette section. -->
 
-...Vos conclusions ici...
+Dans cette étude, nous avons analysé l\'influence de certaines variables démographiques, telles que l\'âge, le genre et le type d\'obésité, sur la masse corporelle, l\'IMC et l\'indice de masse grasse. Les résultats mettent en évidence plusieurs tendances notables.
 
-Du point de vue des différences hommes-femmes, on peut remarquer directement des différences de masse, de taille et de pratique d'activités physiques. Pour analyser plus en profondeur ce sujet, nous avons comparé le rapport taille hanche des différents genres en les liant à des types d'obésités. Nous avons également réalisé une Anova pour observer l'influence du rapport taille hanche sur la masse en fonction du sexe. Les résultats nous montrent une différence significative entre les hommes et les femmes concernant l'influence du rapport taille hanche sur la masse. Egalement, le graphique de l'indice 2 nous montre visuellement ce phénomène. On observe que l'obésité androïde est plus fréquente chez les hommes que chez les femmes. Aucune femme de notre échantillon n'est en obésité gynoïde, certainement du à leurs morphologie la plus commune en forme de type "poire" qui accepte une plus large gamme de rapport taille hanche sans que cela soit du à une obésité.
+L\'âge semble avoir un impact sur l\'indice de masse corporelle : les seniors présentent une corpulence plus élevée que les jeunes adultes. Cette différence pourrait être liée à une évolution de la composition corporelle, du métabolisme ou des habitudes de vie avec l\'âge. En d\'autres termes, on tend à prendre du poids en vieillissant.
+
+Le genre influence également la répartition de la masse grasse. Les femmes ont en moyenne un pourcentage de masse grasse plus élevé que les hommes, ce qui reflète des différences biologiques bien établies. Toutefois, le genre ne semble pas affecter directement l\'IMC, qui reste comparable entre hommes et femmes.
+
+L\'interaction entre genre et type d\'obésité révèle aussi des différences importantes. Les femmes sont absentes du groupe présentant une obésité gynoïde, tandis que les hommes sont davantage représentés dans les formes d\'obésité androïde. Ces distinctions suggèrent que les formes de stockage des graisses diffèrent selon le sexe.
+
+En ce qui concerne la répartition de la population selon l\'IMC, la majorité des individus présentent une corpulence normale ou une surcharge pondérale. Les jeunes adultes dominent numériquement et sont majoritairement dans ces catégories. À l\'inverse, les femmes sont surreprésentées dans les cas de carence pondérale, et les seniors -- en particulier les femmes -- sont davantage concernés par la surcharge pondérale ou l\'obésité. Cela pourrait indiquer une tendance à la prise de poids avec l\'âge, plus marquée chez les femmes.
+
+Enfin, bien que certaines tendances soient nettes, la taille limitée de certains sous-groupes (notamment les adultes matures ou certaines classes de régime alimentaire) impose de nuancer les conclusions. L\'échantillon n\'est pas toujours représentatif de l\'ensemble de la population, ce qui peut restreindre la portée générale des résultats.
 
 <!--# Important : ce document doit compiler SANS ERREURS avec le bouton 'Rendu' sinon le travail sera sanctionné lourdement. La compilation du document Quarto est maintenant considérée comme acquise. -->
 
