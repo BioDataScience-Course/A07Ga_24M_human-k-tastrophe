@@ -102,10 +102,10 @@ biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
     "Moyenne de cigarettes" = fmean(fumeur),
-    "moyenne alcool (verres/sem)" = fmean(alcool),
+    "Moyenne alcool (verres/sem)" = fmean(alcool),
     "Moyenne des fast-food" = fmean(fast_food),
-    "moyenne d'activités physiques (min)" = fmean(activite_physique),
-    "moyenne de l'IMC" = fmean(IMC),
+    "Moyenne d'activités physiques (min)" = fmean(activite_physique),
+    "Moyenne de l'IMC" = fmean(IMC),
     "n" = fn(masse_corr)) ->
   Moyenne_tab
 tabularise(Moyenne_tab, auto.labs = FALSE)
@@ -127,9 +127,14 @@ Nous pouvons observer dans les 2 tableaux les moyennes de nombreuses variables d
 
 Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
 
+<<<<<<< HEAD
 ## Tests d'hypothèses
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
+=======
+
+## Indices de santé
+>>>>>>> 89907f7b51a5070266760ef3f360dac1f8b3a8c3
 
 ### Indice 1
 
@@ -163,7 +168,7 @@ $Interprétation$
     ratio_taille_hanche >= 0.95 ~ "androïde")))
 ```
 
-La formule pour calculer cet indice est:
+La formule pour calculer cet indice est: tour de taille / tour de hanche.
 
 ```{r plot_indice1_Louise_Dubrecq}
 a <- chart(biometry1[genre == "F"], masse_corr[genre == "F"] ~ RTH[genre == "F"] %col=% RTH[genre == "F"]) +
@@ -184,7 +189,13 @@ b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"]
 combine_charts(list(a, b))
 ```
 
+<<<<<<< HEAD
 $Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
+=======
+
+$Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
+
+>>>>>>> 89907f7b51a5070266760ef3f360dac1f8b3a8c3
 
 ### Indice 3
 
