@@ -168,7 +168,7 @@ L'échantillon analysé est composé majoritairement de jeunes adultes (64,1 %),
 
 Le premier graphique met en évidence une relation positive entre la taille et la masse corporelle, quel que soit le genre. Il illustre également que les hommes sont en moyenne plus grands et plus lourds que les femmes. On y remarque une variation dans la forme de la courbe selon le sexe, ce qui suggère des morphologies différentes entre hommes et femmes -- une hypothèse explorée plus précisément dans la suite de l'analyse.
 
-Les tableaux de synthèse viennent appuyer ces observations en détaillant les différences morphologiques et comportementales entre les genres. Les hommes présentent une taille, une masse, un tour de poignet et un tour de taille moyens supérieurs à ceux des femmes, tandis que les femmes ont un tour de hanche plus élevé. Ces différences confortent l'idée de profils corporels distincts.
+Le tableau de synthèse vient appuyer ces observations en détaillant les différences morphologiques et comportementales entre les genres. Les hommes présentent une taille, une masse, un tour de poignet et un tour de taille moyens supérieurs à ceux des femmes, tandis que les femmes ont un tour de hanche plus élevé. Ces différences confortent l'idée de profils corporels distincts.
 
 Sur le plan des comportements liés à la santé, les femmes déclarent fumer davantage, mais les hommes consomment plus d'alcool, fréquentent plus les fast-foods et pratiquent davantage d'activité physique. Malgré ces divergences, l'IMC moyen est similaire dans les deux groupes, légèrement au-dessus de 25, suggérant un niveau comparable de surcharge pondérale.
 
