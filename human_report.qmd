@@ -39,9 +39,7 @@ Notre travail vise à visualiser les résultats obtenus par @lebacq2015 avec un 
 
 <!--% Formulez ici de façon concise et précise votre question de recherche en 1 à 2 phrases. -->
 
-1\) Comment les données anthropométrique de notre échantillon de la population belge et celles obtenues par \@lebacq2015 reflètent elle l'état de santé de la population?
-
-2\) Que révèlent les données anthropométriques de notre échantillon et celles de Lebacq et al. (2015) sur l'état de santé de la population belge ?
+Que révèlent les données anthropométriques de notre échantillon et celles de @lebacq2015 sur l'état de santé de la population belge ?
 
 # Matériel et méthodes
 
@@ -51,9 +49,7 @@ Dans le cadre de ce travail, les données ont été collectées fin 2024 par une
 
 De plus, pour limiter les erreurs de mesure sur la masse nous avons réalisé une inter-calibration ce qui permet une meilleure exactitude des résultats.
 
-1\) Nous avons également dû suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tous les volontaires sont donc sous la forme d'un identifiant.
-
-2\) Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
+Nous avons également dû respecter strictement la règle de l'anonymat des personnes mesurées, conformément au RGPD. Tous les volontaires ont donc été identifiés uniquement par un code anonyme.
 
 Les données et les tests statistiques sont réalisés avec le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow" et un système d'exploitation Linux 64 bits, avec une architecture x86_64.
 
@@ -94,18 +90,6 @@ names(dimnames(tab_sex_age)) <- c("Tranche d'âge", "Genre")
 # Affichage du tableau
 tabularise(tab_sex_age)
 ```
-
-$Interprétation$
-
-Dans la population considérée :
-
-Il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme.
-
-Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60%.
-
-Les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
-
-Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
 
 ```{r description}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
@@ -169,6 +153,10 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 
 $Interprétation$
 
+Dans la population considérée, il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme. Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60% et les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+
+Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
+
 Le **graphique 1** met en évidence deux tendances principales : les hommes sont globalement plus grands et plus lourds que les femmes, et une **relation positive** est visible entre la **masse** des individus et leur **taille ou tour de hanche**, tous genres confondus. Cette corrélation visuelle suggère que **la morphologie diffère entre les genres**, hypothèse explorée plus rigoureusement par un test statistique ultérieur.
 
 Les **tableaux** viennent préciser et compléter cette première observation. Sur le plan **morphologique**, les hommes présentent des valeurs moyennes plus élevées en taille, masse, tour de taille et tour de poignet, tandis que les femmes ont un tour de hanche plus développé, ce qui confirme une différence de silhouette.
@@ -186,16 +174,45 @@ Le dernier graphique, nous montre la dispersion des individus en fonction du ré
 ### Indice 1
 
 ```{r indice1_Martin_Jadouille}
+# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+biometry <- biometry %>.%
+  smutate(.,group_age = cut(age, 
+    breaks = c(-Inf,17,25, 64, Inf), 
+    labels = c("Moins de 18 ans","18-25", "26-64","65+"),right = TRUE))
 
+ biometry <- biometry %>.%
+  smutate(.,sommeil_optimal = case_when(
+    group_age == "Moins de 18 ans"~9,
+    group_age == "18-25" ~8,
+    group_age =="26-64"~7.5,
+    group_age == "65+" ~7.5
+  ))
+
+biometry <- biometry %>.%
+  smutate(.,dette_sommeil = sommeil_optimal - sommeil)
 ```
 
 La formule pour calculer cet indice est:
 
-```{r plot_indice1_Martin_Jadouille}
+$\text{dette de sommeil} = {\text{sommeil optimal} - \text{sommeil réel}}$
 
+Source : https://www.erudit.org/fr/revues/rum/2012-v43-n1-2-rum01300/1023984ar/
+
+```{r plot_indice1_Martin_Jadouille}
+ biometry <- biometry %>.%
+  smutate(.,IMC = masse_corr / (taille / 100)^2)  
+  chart(biometry,dette_sommeil ~ IMC | group_age ) +
+  geom_boxplot()+
+    geom_jitter(alpha = 0.3, width = 0.2, height = 0, color = "blue")
 ```
 
 $Interprétation$
+
+-   Une grande partie des individus sont en manque de sommeil.
+
+-   Plus on vieillit, plus la dette de sommeil diminue.
+
+-   On ne remarque pas de tendance particulière et encore moins celle attendue. Normalement, les personnes ayant une dette de sommeil ont un IMC plus élevé
 
 ### Indice 2
 
@@ -244,13 +261,56 @@ $Interprétation$ - L'obésité androïde est plus fréquente chez les hommes qu
 
 ```{r indice1__Pierre_Martin}
 
+# Calcul de la ou des variables reprenant l'indice sous forme numérique (et facteur)
+
+#IMG=(1.51×IMC)+(0.70× age)−(3.6×sexe)−1.4
+
+biometry <- biometry %>.%
+  smutate(., 
+    genre_img = ifelse(genre == "H", 1, 0),
+    Indice_de_masse_grasse = ((1.2 * IMC) + (0.23 * age) - (10.8 * genre_img) - 5.4))
+
+tabularise$headtail(biometry) 
+
 ```
 
 La formule pour calculer cet indice est:
 
-```{r plot_indice1__Pierre_Martin}
+Pour les femmes
 
+$
+\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 5.4
+$
+
+Pour les hommes
+
+$
+\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - 16.2)
+$
+
+Formule utilisée fusionnant les 2 formules
+
+$
+\text{IMG} = (1.2 \times \text{IMC}) + (0.23 \times \text{Âge}) - (10.8 \times \text{Genre}) - 5.4
+$
+
+Avec comme valeur 1 si genre = homme et 0 si genre = femme
+
+```{r plot_indice1__Pierre_Martin}
+# Graphique ou tableau utilisant l'indice calculé.
+chart(data = biometry, Indice_de_masse_grasse ~ genre %fill=% group_age| alimentation)+
+  geom_boxplot()
 ```
+
+$Interprétation$
+
+-   Les femmes on en moyenne un IMG plus élevé que les hommes peu importe le régime alimentaire. (pas d'homme pour régime végétarien donc comparaison non possible)
+
+-   Deux valeurs extrêmes sont observées pour les hommes entre 18 et 25 ans ayant un régime omnivore.
+
+-   On observe que peu importe le régime alimentaire et le genre, quand l'âge augmente l'indice de masse grasse augmente lui aussi.
+
+-   Chez les omnivores la distributions des individus est plus grande chez les femmes dans un même groupe d'âge.
 
 ### Indice 4
 
@@ -399,7 +459,9 @@ Pour finir, nous avons voulu voir si le genre influençait l'IMC. Le test n'a pa
 
 <!--% Reprenez les résultats obtenus, discutez-les d'un point de vue biologique en 4 à 5 paragraphes et concluez votre travail. Vous pouvez les mettre également en relation avec vos recherches bibliographiques dans cette section. -->
 
-...Vos conclusions ici... Du point de vue des différences hommes-femmes, on peut remarquer directement des différences de masse, de taille et de pratique d'activités physiques. Pour analyser plus en profondeur ce sujet, nous avons comparé le rapport taille hanche des différents genres en les liants à des types d'obésités. Nous avons également réalisé une Anova pour observer l'influence du rapport taille hanche sur la masse en fonction du sexe. Les résultats nous montrent une différence significative entre les hommes et les femmes concernant l'influence du rapport taille hanche sur la masse. Egalement, le graphique de l'indice 2 nous montre visuellement ce phénomène. On observe que l'obésité androïde est plus fréquente chez les hommes que chez les femmes. Aucune femme de notre échantillon n'est en obésité gynoïde, certainement du à leurs morphologie la plus commune en forme de type "poire" qui accepte une plus large gamme de rapport taille hanche sans que cela soit du à une obésité.
+...Vos conclusions ici...
+
+Du point de vue des différences hommes-femmes, on peut remarquer directement des différences de masse, de taille et de pratique d'activités physiques. Pour analyser plus en profondeur ce sujet, nous avons comparé le rapport taille hanche des différents genres en les liant à des types d'obésités. Nous avons également réalisé une Anova pour observer l'influence du rapport taille hanche sur la masse en fonction du sexe. Les résultats nous montrent une différence significative entre les hommes et les femmes concernant l'influence du rapport taille hanche sur la masse. Egalement, le graphique de l'indice 2 nous montre visuellement ce phénomène. On observe que l'obésité androïde est plus fréquente chez les hommes que chez les femmes. Aucune femme de notre échantillon n'est en obésité gynoïde, certainement du à leurs morphologie la plus commune en forme de type "poire" qui accepte une plus large gamme de rapport taille hanche sans que cela soit du à une obésité.
 
 <!--# Important : ce document doit compiler SANS ERREURS avec le bouton 'Rendu' sinon le travail sera sanctionné lourdement. La compilation du document Quarto est maintenant considérée comme acquise. -->
 
