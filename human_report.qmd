@@ -127,9 +127,7 @@ Nous pouvons observer dans les 2 tableaux les moyennes de nombreuses variables d
 
 Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
 
-
 ## Indices de santé
-
 
 ### Indice 1
 
@@ -184,13 +182,9 @@ b <- chart(biometry1[genre == "H"], masse_corr[genre == "H"] ~ RTH[genre == "H"]
 combine_charts(list(a, b))
 ```
 
-
 $Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
 
-
-
 $Interprétation$ - L'obésité androïde est plus fréquente chez les hommes que chez les femmes mais est toujours associé à une masse plus élevée qu'importe le genre. - Variabilité importante des masses en obésité androïde. - Il n'y a pas d'obésité gynoïde chez les femmes. - Les hommes en obésité gynoïde présente une masse plus faible que le groupe "normal" et "androïde" - La catégorie des hommes en obésité androïde présente des valeurs extrêmes au-dessus de 120 kg.
-
 
 ### Indice 3
 
@@ -314,18 +308,9 @@ summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(
 plot(IMG_posthoc)
 ```
 
+Nous avons voulu vérifier si des données démographiques influençaient la masse. Premièrement, dans le but de savoir l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisé. Il y a une différence significative de masse uniquement entre deux groupes d'âges; les séniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
 
-
-
-
-
-
-
-Nous avons voulu vérifier si des données démographiques influençaient la masse.
-Premièrement, dans le but de savoir l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisé. Il y a une différence significative de masse uniquement entre deux groupes d'âges; les séniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
-
-Aussi, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes. Ces-dernières ont tendance à avoir un plus haut indice en moyenne.
-Suite à cela et pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les genres concernant l'effet du rapport taille hanche sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46*10^(-09)).
+Aussi, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes. Ces-dernières ont tendance à avoir un plus haut indice en moyenne. Suite à cela et pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les genres concernant l'effet du rapport taille hanche sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)).
 
 # Discussion et conclusions
 
