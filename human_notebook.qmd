@@ -800,9 +800,9 @@ tabularise(.)
 
 <!--% Hypothèse nulle et alternative -->
 
--   H0 : L'IMC n'est pas significativement différent en fonction du rapport taille-hanche (RTH) et/ou en fonction de la consommation de sucre
+-   H0 : La masse n'est pas significativement différente sous l'influence du rapport taille-hanche (RTH) en fonction du sexe.
 
--   H1 : L'IMC est significativement différent en fonction du rapport taille-hanche (RTH) et/ou en fonction de la consommation de sucre
+-   H1 : La masse est significativement différente sous l'influence du rapport taille-hanche (RTH) en fonction du sexe.
 
 <!--% Vérification des conditions d'application -->
 
