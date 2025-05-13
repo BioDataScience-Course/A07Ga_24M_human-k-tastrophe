@@ -153,21 +153,15 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 
 $Interprétation$
 
-Dans la population considérée, il y a une majorité de jeunes adultes (64.1%) avec une répartition relativement égale d'homme et de femme. Les adultes matures ont une proportion de 16.2 % avec une majorité de femmes à hauteur de 60% et les seniors ont une proportion de 19.7% avec une majorité de femmes à hauteur de 60.7%.
+L\'échantillon analysé est composé majoritairement de jeunes adultes (64,1 %), avec une répartition équilibrée entre hommes et femmes dans cette tranche d\'âge. Les adultes matures représentent 16,2 % de la population, dont 60 % sont des femmes, tandis que les seniors constituent 19,7 %, avec une proportion féminine de 60,7 %. Ces déséquilibres de genre dans les tranches d\'âge les plus élevées devront être pris en compte dans l\'interprétation des résultats, notamment lorsqu\'il s\'agit d\'analyser les effets de l\'âge ou du sexe.
 
-Pour les analyses suivantes, nous devrons tenir compte de ces proportions pour les conclusions.
+Le premier graphique met en évidence une relation positive entre la taille et la masse corporelle, quel que soit le genre. Il illustre également que les hommes sont en moyenne plus grands et plus lourds que les femmes. On y remarque une variation dans la forme de la courbe selon le sexe, ce qui suggère des morphologies différentes entre hommes et femmes -- une hypothèse explorée plus précisément dans la suite de l\'analyse.
 
-Le **graphique 1** met en évidence deux tendances principales : les hommes sont globalement plus grands et plus lourds que les femmes, et une **relation positive** est visible entre la **masse** des individus et leur **taille ou tour de hanche**, tous genres confondus. Cette corrélation visuelle suggère que **la morphologie diffère entre les genres**, hypothèse explorée plus rigoureusement par un test statistique ultérieur.
+Les tableaux de synthèse viennent appuyer ces observations en détaillant les différences morphologiques et comportementales entre les genres. Les hommes présentent une taille, une masse, un tour de poignet et un tour de taille moyens supérieurs à ceux des femmes, tandis que les femmes ont un tour de hanche plus élevé. Ces différences confortent l\'idée de profils corporels distincts.
 
-Les **tableaux** viennent préciser et compléter cette première observation. Sur le plan **morphologique**, les hommes présentent des valeurs moyennes plus élevées en taille, masse, tour de taille et tour de poignet, tandis que les femmes ont un tour de hanche plus développé, ce qui confirme une différence de silhouette.
+Sur le plan des comportements liés à la santé, les femmes déclarent fumer davantage, mais les hommes consomment plus d\'alcool, fréquentent plus les fast-foods et pratiquent davantage d\'activité physique. Malgré ces divergences, l\'IMC moyen est similaire dans les deux groupes, légèrement au-dessus de 25, suggérant un niveau comparable de surcharge pondérale.
 
-Concernant les **habitudes de vie**, les hommes se distinguent par une activité physique plus importante, une consommation plus fréquente d'alcool et de fast-food. À l'inverse, les femmes déclarent fumer davantage. Malgré ces différences de comportement, l'**IMC moyen** reste similaire entre les deux groupes (autour de 25), suggérant des styles de vie compensés d'une certaine manière.
-
-En croisant ces éléments visuels et numériques, on observe donc des **différences claires entre les genres**, tant sur le **plan corporel** que **comportemental**, avec une certaine cohérence entre les sources d'information.
-
-Boite à moustache
-
-Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
+Le dernier graphique explore le lien entre régime alimentaire, genre et taille. On y confirme que les hommes sont plus grands que les femmes, tous régimes confondus. Chez les hommes, la taille médiane varie peu entre omnivores et carnivores. Chez les femmes, les végétariennes semblent légèrement plus grandes que les carnivores, avec une taille comparable aux omnivores. Toutefois, les effectifs très faibles dans les groupes carnivore et végétarien, ainsi que des données manquantes chez les hommes, limitent fortement l'interprétation de ces résultats. On ne peut, à ce stade, tirer aucune conclusion solide sur l\'effet du régime alimentaire sur la taille.
 
 ## Indices de santé
 

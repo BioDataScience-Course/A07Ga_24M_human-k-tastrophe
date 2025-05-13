@@ -502,8 +502,6 @@ $H_1: \overline{Taille}_{hommes} - \overline{Taille}_{femmes} \neq 0$
 <!-- Vérification des conditions d'application -->
 
 ```{r test_t_1}
-
-#Pour utiliser un test t de student, il faut que la variance entre les deux groupes considérés soit similaire(simple au double). Dans le cas contraire, changer "var.equal = TRUE" -> ""var.equal = FALSE"
 biometry %>.%
   sgroup_by(., genre) %>.% 
   ssummarise(.,
@@ -515,23 +513,14 @@ biometry %>.%
   taille_genre
 tabularise(taille_genre)
 
-#Le test de t student suppose que la distribution est normale. On peut vérifier cette distribution grâce à un graphique quantile-quantile
-# Rappel : distribution de la population…
-  #_normale_, alors le test basé sur la distribution t de Student   sera exact
-  #_approximativement normale_, le test sera approximativement exact
-  #_non normale_, le test sera approximativement exact si n est grand.
-# Calcul des quantiles observés
 probas <- seq(0, 1, length.out = length(biometry_imc$taille))
-q_obs_taille <- quantile(biometry_imc$taille, probs = probas)
+q_obs_taille <- quantile(biometry_imc$taille, probs = probas, na.rm = TRUE)
 
-# Quantiles théoriques selon la distribution normale réduite
 q_theo_taille <- qnorm(probas, mean = 0, sd = 1)
 
-# Création du data frame
 qq_taille <- dtx(q_obs = q_obs_taille, q_theo = q_theo_taille)
 qq_taille
 
-# QQ-plot avec car::qqPlot
 library(car)
 car::qqPlot(biometry_imc[["taille"]], distribution = "norm",
   envelope = 0.95, col = "Black", ylab = "Taille (cm)")
