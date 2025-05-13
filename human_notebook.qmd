@@ -86,7 +86,7 @@ $Interprétation$
 ### Description par l'étudiant 2
 
 ```{r description1_Louise_DUBRECQ}
-chart(biometry, masse_corr ~ tour_hanche %col=% genre) +
+chart(biometry, masse_corr ~ tour_hanche %col=% genre|genre) +
 geom_point() +
   ylab("Masse des individus (kg)")+
   xlab("Taille du tour de hanche (cm)")
