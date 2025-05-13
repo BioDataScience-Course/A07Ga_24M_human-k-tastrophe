@@ -256,23 +256,6 @@ $Interprétation$
 
 <!--% Sélectionnez les 4 tests d'hypothèses les plus pertinents depuis `human_notebook.qmd`, ainsi bien sûr que les calculs des indices nécessaires que vous placerez juste au-dessus de vos tests. Ces tests doivent répondre à votre question de recherche (le but). Reformulez les interprétations pour former un texte qui se lit en continu. -->
 
-Comparaison de l'influence du rapport taille/hanche sur la masse en fonction du sexe par une anova à 2 facteurs :
-
-```{r Anova à 2 facteurs}
-#Anova
-biometry1$RTH <- as.factor(biometry1$RTH)
-biometry1$sucre<- as.factor(biometry1$genre)
-biometry1$RTH_genre <- interaction(biometry1$RTH, biometry1$genre)
-
-anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_genre)) %>.%
-tabularise(.)
-
-#Test Posthoc
-summary(RTH_testposthoc <- confint(multcomp::glht(RTH_anova2,
-  linfct = multcomp::mcp(RTH_genre = "Tukey"))))
-oma <- par(oma = c(0, 5.1, 0, 0))
-plot(RTH_testposthoc)
-```
 
 Comparaison de la masse par tranche d'âge :
 
@@ -296,7 +279,7 @@ rm(oma)
 
 Comparaison de l'indice de masse grasse par genre : 
 
-```{r Indice de masse grasse en fonction du genre}
+```{r Anova à un facteur}
 IMG_anova <- lm (data = biometry, Indice_de_masse_grasse ~ genre )
 anova(IMG_anova)|> tabularise()
 
@@ -310,9 +293,31 @@ summary(IMG_posthoc <- confint(multcomp::glht(IMG_anova, linfct = multcomp::mcp(
 plot(IMG_posthoc)
 ```
 
+Comparaison de l'influence du rapport taille/hanche sur la masse en fonction du sexe par une anova à 2 facteurs :
+
+```{r Anova à 2 facteurs}
+#Anova
+biometry1$RTH <- as.factor(biometry1$RTH)
+biometry1$sucre<- as.factor(biometry1$genre)
+biometry1$RTH_genre <- interaction(biometry1$RTH, biometry1$genre)
+
+anova(RTH_anova2 <- lm(data = biometry1, masse_corr ~ RTH_genre)) %>.%
+tabularise(.)
+
+#Test Posthoc
+summary(RTH_testposthoc <- confint(multcomp::glht(RTH_anova2,
+  linfct = multcomp::mcp(RTH_genre = "Tukey"))))
+oma <- par(oma = c(0, 5.1, 0, 0))
+plot(RTH_testposthoc)
+```
+
+
+
+
+
 Nous avons voulu vérifier si des données démographiques influençaient la masse. Premièrement, dans le but de savoir l'influence des différentes tranches d'âge sur la masse, une anova à un facteur à été réalisé. Il y a une différence significative de masse uniquement entre deux groupes d'âges; les séniors et les jeunes adultes (ANOVA, F = 6.71, ddl = 2& 137, valeur p = 0.00166).
 
-Aussi, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes. Ces-dernières ont tendance à avoir un plus haut indice en moyenne. Suite à cela et pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les genres concernant l'effet du rapport taille hanche sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)).
+Aussi, nous avons comparé les genres. Il y a une différence d'indice de masse grasse significative entre les hommes et les femmes (Anova, ddl : 1, Fobs : 60.2, p : 1.57 * 10^(-12)). Ces-dernières ont tendance à avoir un plus haut indice en moyenne. Suite à cela et pour confirmer le graphique en boîte à moustache n°2, nous avons réalisé une Anova à 2 facteurs, examinant l'influence qu'a le rapport taille hanche sur la masse en fonction du genre. Le test a concordé avec comme résultat une variation significative entre les genres concernant l'effet du rapport taille hanche sur la masse (ANOVA, ddl : 4, Fobs : 13.1, 4.46\*10\^(-09)).
 
 # Discussion et conclusions
 
