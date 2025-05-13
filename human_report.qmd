@@ -91,7 +91,7 @@ names(dimnames(tab_sex_age)) <- c("Tranche_d_âge", "Genre")
 tabularise(tab_sex_age)
 ```
 
-```{r description}
+```{r description 2}
 A<-chart(biometry, masse_corr ~ taille %col=% genre) +
   geom_point() +
   xlab("Taille(cm)") +
@@ -107,7 +107,7 @@ geom_point() +
 combine_charts(list(A, B))
 ```
 
-```{r description}
+```{r description 3}
 biometry %>.%
   sgroup_by(., genre) %>.%
   ssummarise(.,
@@ -143,7 +143,7 @@ tabularise(Moyenne_tab_act, auto.labs = FALSE)
 
 ```
 
-```{r description}
+```{r description 4}
 chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
   xlab("Genre") +
   ylab("Taille (m)") +
