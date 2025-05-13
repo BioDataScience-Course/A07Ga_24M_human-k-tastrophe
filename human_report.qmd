@@ -49,9 +49,7 @@ De plus, pour limiter les erreurs de mesures sur la masse nous avons réalisé u
 
 Nous avons également du suivre une règle très stricte de l'anonymat des personnes mesurées (RGPD), tout les volontaires sont donc sous la forme d'un identifiant.
 
-Les données et les tests statistiques sont réalisés avec le package SciViews Box 2024 en utilisant le système d'exploitation linux avec le le logiciel R en version 4.3.0 version string.
-
-# Résultats
+Les données et les tests statistiques sont réalisés avec le package SciViews Box 2024 en utilisant le système d'exploitation linux avec le le logiciel R en version 4.3.0 (2023-04-21) -- "Already Tomorrow".
 
 # Résultats
 
