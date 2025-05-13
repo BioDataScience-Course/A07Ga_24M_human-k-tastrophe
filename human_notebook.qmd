@@ -51,7 +51,7 @@ biometry <- read("data/biometry.rds")
 
 ```{r}
 
-chart(biometry, masse_corr ~ taille %col=% genre) +
+chart(biometry, masse_corr ~ taille %col=% genre|genre) +
   geom_point() +
   xlab("Taille(cm)") +
   ylab("Masse(kg)")+

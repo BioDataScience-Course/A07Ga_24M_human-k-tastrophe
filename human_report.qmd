@@ -132,8 +132,9 @@ biometry %>.%
     "Moyenne du tour de hanche(cm)" = fmean(tour_hanche),
     "Moyenne de la masse(kg)" = fmean(masse_corr),
     "Moyenne du tour de taille(cm)" = fmean(tour_taille),
-    "n" = fn(genre))%>.%
-tabularise(.)
+    "n" = fn(genre))->Moyenne_tab_mesure
+colnames(Moyenne_tab_mesure)[1] <- "Genre"
+tabularise(Moyenne_tab_mesure)
 
 biometry <- biometry %>.%
   smutate(.,IMC = masse_corr / (taille / 100)^2)
@@ -147,8 +148,15 @@ biometry %>.%
     "Moyenne d'activités physiques (min)" = fmean(activite_physique),
     "Moyenne de l'IMC" = fmean(IMC),
     "n" = fn(masse_corr)) ->
-  Moyenne_tab
-tabularise(Moyenne_tab, auto.labs = FALSE)
+  Moyenne_tab_act
+
+colnames(Moyenne_tab_act) <- c("Genre", "Moyenne de cigarettes", "Moyenne alcool (verres/sem)", 
+                       "Moyenne des fast-food", "Moyenne activité physique (min)", "Moyenne de l'IMC", "n")
+
+tabularise(Moyenne_tab_act, auto.labs = FALSE)
+
+
+
 ```
 
 ```{r description}
@@ -161,9 +169,15 @@ chart(data = biometry, taille/100 ~ genre  %fill=%  genre |alimentation ) +
 
 $Interprétation$
 
-Nous observons que les hommes ont une masse moyenne supérieure à celle des femmes et que la taille des hommes est également supérieure. Nous observons une corrélation positive entre la masse des individus et leur taille de tour de hanche. Cette visualisation peut nous mettre sur la piste que  les 2 genres n'ont pas la même forme de corps(Test réalisé par la suite)
+Le **graphique 1** met en évidence deux tendances principales : les hommes sont globalement plus grands et plus lourds que les femmes, et une **relation positive** est visible entre la **masse** des individus et leur **taille ou tour de hanche**, tous genres confondus. Cette corrélation visuelle suggère que **la morphologie diffère entre les genres**, hypothèse explorée plus rigoureusement par un test statistique ultérieur.
 
-Nous pouvons observer dans les 2 tableaux les moyennes de nombreuses variables différenciées par genre. Ces moyennes permettent de visualiser plus rapidement les possibles tendances.
+Les **tableaux** viennent préciser et compléter cette première observation. Sur le plan **morphologique**, les hommes présentent des valeurs moyennes plus élevées en taille, masse, tour de taille et tour de poignet, tandis que les femmes ont un tour de hanche plus développé, ce qui confirme une différence de silhouette.
+
+Concernant les **habitudes de vie**, les hommes se distinguent par une activité physique plus importante, une consommation plus fréquente d\'alcool et de fast-food. À l\'inverse, les femmes déclarent fumer davantage. Malgré ces différences de comportement, l\'**IMC moyen** reste similaire entre les deux groupes (autour de 25), suggérant des styles de vie compensés d\'une certaine manière.
+
+En croisant ces éléments visuels et numériques, on observe donc des **différences claires entre les genres**, tant sur le **plan corporel** que **comportemental**, avec une certaine cohérence entre les sources d\'information.
+
+Boite à moustache
 
 Le dernier graphique, nous montre la dispersion des individus en fonction du régime alimentaire et du genre. On observe que les hommes sont plus grands que les femmes, quel que soit le régime alimentaire. Chez les hommes, la taille médiane est assez proche entre les omnivores et carnivores. Chez les femmes, les végétariennes ont une taille moyenne similaire aux omnivores, mais semblent un peu plus grandes que les carnivores. Nous observons des valeurs manquantes pour les hommes ce qui pourrait poser problèmes et qui montre que l'échantillonnage n'est peut-être pas représentatif de la population globale.
 
