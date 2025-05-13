@@ -843,7 +843,11 @@ plot(RTH_testposthoc)
 
 <!--% Interprétation statistique et biologique -->
 
-Les individus ayant les masses les plus élevés
+Au test de Bartlett, p \> 0.05 (0.2441), H0 ne peut pas être rejeter au seuil alpha de 5% ( df = 4, p-value = 0.2441)
+
+On ne peut pas démontrer une de influence significative de l\'interaction du rapport taille-hanche (RTH) en fonction du sexe sur la masse au seuil de 5%.
+
+Il y a donc homoscédasticité, une anova est donc possible.
 
 # Discussion et conclusions
 
